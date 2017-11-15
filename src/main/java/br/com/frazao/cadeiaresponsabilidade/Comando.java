@@ -91,7 +91,7 @@ public abstract class Comando {
 		} finally {
 			this.duracao = Duration.between(inicio, Instant.now());
 			if (log().isInfoEnabled()) {
-				log().debug("Executou em " + descreverTempo(getDuracao().toMillis()));
+				log().info("Executou em " + descreverTempo(getDuracao().toMillis()));
 			}
 		}
 	}
