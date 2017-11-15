@@ -18,14 +18,7 @@ public abstract class Comando {
 	protected Instant inicio;
 
 	private Log log = null;
-	
-	protected Log log() {
-		if (log == null) {
-			log = LogFactory.getLog(getClass());
-		}
-		return log;
-	}
-	
+
 	public Comando() {
 		super();
 		if (log().isTraceEnabled()) {
@@ -33,11 +26,17 @@ public abstract class Comando {
 		}
 	}
 
-	protected boolean antesExecutar(Contexto<?, ?> contexto) {
+	protected boolean antesProcedimento(Contexto<?, ?> contexto) {
 		if (log().isDebugEnabled()) {
 			log().debug("Antes de executar");
 		}
 		return CONTINUAR;
+	}
+
+	protected void depoisProcedimento(Contexto<?, ?> contexto) {
+		if (log().isTraceEnabled()) {
+			log().trace("Depois de executar");
+		}
 	}
 
 	private String descreverTempo(long milessegundos) {
@@ -78,10 +77,11 @@ public abstract class Comando {
 			}
 			do {
 				try {
-					if (!antesExecutar(contexto)) {
+					if (!antesProcedimento(contexto)) {
 						break;
 					}
 					procedimento(contexto);
+					depoisProcedimento(contexto);
 				} catch (Exception e) {
 					if (!erroAoExecutar(contexto, e)) {
 						throw e;
@@ -102,6 +102,13 @@ public abstract class Comando {
 
 	public Instant getInicio() {
 		return this.inicio;
+	}
+
+	protected Log log() {
+		if (log == null) {
+			log = LogFactory.getLog(getClass());
+		}
+		return log;
 	}
 
 	protected abstract void procedimento(Contexto<?, ?> contexto) throws Exception;
