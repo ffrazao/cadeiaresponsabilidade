@@ -18,14 +18,25 @@ public abstract class Comando {
 	protected Instant inicio;
 
 	private Log log = null;
-
+	
+	protected Log log() {
+		if (log == null) {
+			log = LogFactory.getLog(getClass());
+		}
+		return log;
+	}
+	
 	public Comando() {
 		super();
-		logTrace("Novo Comando");
+		if (log().isTraceEnabled()) {
+			log().trace("Novo Comando");
+		}
 	}
 
 	protected boolean antesExecutar(Contexto<?, ?> contexto) {
-		logDebug("Antes de executar");
+		if (log().isDebugEnabled()) {
+			log().debug("Antes de executar");
+		}
 		return CONTINUAR;
 	}
 
@@ -47,7 +58,9 @@ public abstract class Comando {
 	}
 
 	protected boolean erroAoExecutar(Contexto<?, ?> contexto, Exception excecao) throws Exception {
-		logError("Erro ao executar");
+		if (log().isErrorEnabled()) {
+			log().error("Erro ao executar");
+		}
 		excecao.printStackTrace();
 		return PARAR;
 	}
@@ -60,7 +73,9 @@ public abstract class Comando {
 			if (contexto == null) {
 				throw new IllegalArgumentException("Contexto não informado");
 			}
-			logInfo("Vai executar");
+			if (log().isInfoEnabled()) {
+				log().info("iniciado");
+			}
 			do {
 				try {
 					if (!antesExecutar(contexto)) {
@@ -75,7 +90,9 @@ public abstract class Comando {
 			} while (vaiRepetir(contexto));
 		} finally {
 			this.duracao = Duration.between(inicio, Instant.now());
-			logInfo("Executou em " + descreverTempo(getDuracao().toMillis()));
+			if (log().isInfoEnabled()) {
+				log().debug("Executou em " + descreverTempo(getDuracao().toMillis()));
+			}
 		}
 	}
 
@@ -87,53 +104,12 @@ public abstract class Comando {
 		return this.inicio;
 	}
 
-	final Log log() {
-		if (this.log == null) {
-			log = LogFactory.getLog(getClass());
-		}
-		return log;
-	}
-
-	protected final void logDebug(Object message) {
-		if (log().isDebugEnabled()) {
-			log().debug(message);
-		}
-	}
-
-	protected final void logError(Object message) {
-		if (log().isErrorEnabled()) {
-			log().error(message);
-		}
-	}
-
-	protected final void logFatal(Object message) {
-		if (log().isFatalEnabled()) {
-			log().fatal(message);
-		}
-	}
-
-	protected final void logInfo(Object message) {
-		if (log().isInfoEnabled()) {
-			log().info(message);
-		}
-	}
-
-	protected final void logTrace(Object message) {
-		if (log().isTraceEnabled()) {
-			log().trace(message);
-		}
-	}
-
-	protected final void logWarn(Object message) {
-		if (log().isWarnEnabled()) {
-			log().warn(message);
-		}
-	}
-
 	protected abstract void procedimento(Contexto<?, ?> contexto) throws Exception;
 
 	protected boolean vaiRepetir(Contexto<?, ?> contexto) {
-		logDebug("Vai repetir?");
+		if (log().isDebugEnabled()) {
+			log().debug("Vai repetir?");
+		}
 		return PARAR;
 	}
 

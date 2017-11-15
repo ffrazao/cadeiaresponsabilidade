@@ -12,10 +12,16 @@ public abstract class Cadeia extends Comando {
 	protected boolean congelado = false;
 
 	public Cadeia() {
+		super();
+		if (log().isTraceEnabled()) {
+			log().trace("Nova Cadeia");
+		}
 	}
 
 	public Cadeia(Collection<Comando> comandoList) {
-		logTrace("Nova Cadeia");
+		if (log().isTraceEnabled()) {
+			log().trace("Nova Cadeia Collection<Comando> comandoList");
+		}
 		if (comandoList == null || comandoList.isEmpty()) {
 			throw new IllegalArgumentException("Comandos não informados");
 		}
@@ -24,10 +30,15 @@ public abstract class Cadeia extends Comando {
 
 	public Cadeia(Comando... comandoList) {
 		this(Arrays.asList(comandoList));
+		if (log().isTraceEnabled()) {
+			log().trace("Nova Cadeia Comando... comandoList");
+		}
 	}
 
 	public final void adicionarComando(Comando comando) {
-		logDebug("Adicionando comando");
+		if (log().isDebugEnabled()) {
+			log().debug("Adicionando comando");
+		}
 		if (comando == null) {
 			throw new IllegalArgumentException("O comando não pode ser nulo!");
 		}
