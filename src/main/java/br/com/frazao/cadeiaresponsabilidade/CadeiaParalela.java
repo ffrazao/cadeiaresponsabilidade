@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CadeiaParalela extends Cadeia {
@@ -40,7 +41,14 @@ public class CadeiaParalela extends Cadeia {
 			comando.executar(contexto);
 			return null;
 		}));
-		Executors.newWorkStealingPool().invokeAll(callableList);
+		ExecutorService es = null;
+		try {
+			es = Executors.newWorkStealingPool();
+			es.invokeAll(callableList);
+		} finally {
+			es.shutdown();
+			es = null;
+		}
 	}
 
 }
