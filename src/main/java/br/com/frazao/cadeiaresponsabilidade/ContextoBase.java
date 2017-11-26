@@ -37,4 +37,9 @@ public final class ContextoBase<K, V> extends HashMap<K, V> implements Contexto<
 		this.requisicao = requisicao;
 	}
 
+	@Override
+	public void setResposta(Object resposta) {
+		this.resposta = resposta;
+	}
+
 }

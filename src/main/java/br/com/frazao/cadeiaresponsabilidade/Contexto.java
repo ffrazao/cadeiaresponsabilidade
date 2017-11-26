@@ -10,4 +10,6 @@ public interface Contexto<K, V> extends Map<K, V> {
 
 	public void setRequisicao(Object requisicao);
 
+	public void setResposta(Object resposta);
+
 }
