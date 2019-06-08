@@ -32,7 +32,7 @@ public final class ContextoBase<K, V> extends HashMap<K, V> implements Contexto<
 	@Override
 	public void setRequisicao(Object requisicao) {
 		if (this.requisicao != null) {
-			throw new IllegalStateException("A requisição não pode ser redefinida!");
+			throw new IllegalStateException("A requisiÃ§Ã£o nÃ£o pode ser redefinida!");
 		}
 		this.requisicao = requisicao;
 	}

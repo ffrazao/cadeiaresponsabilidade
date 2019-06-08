@@ -18,24 +18,28 @@ public abstract class Comando {
 	protected Instant inicio;
 
 	private Log log = null;
+	
+	public String getNome() {
+		return this.getClass().getName();
+	}
 
 	public Comando() {
 		super();
 		if (log().isTraceEnabled()) {
-			log().trace("Novo Comando");
+			log().trace(String.format("(%s) novo comando", getNome()));
 		}
 	}
 
 	protected boolean antesProcedimento(Contexto<?, ?> contexto) {
 		if (log().isDebugEnabled()) {
-			log().debug("Antes de executar");
+			log().debug(String.format("(%s) antes de executar", getNome()));
 		}
 		return CONTINUAR;
 	}
 
 	protected void depoisProcedimento(Contexto<?, ?> contexto) {
 		if (log().isTraceEnabled()) {
-			log().trace("Depois de executar");
+			log().trace(String.format("(%s) depois de executar", getNome()));
 		}
 	}
 
@@ -56,11 +60,10 @@ public abstract class Comando {
 		return String.format("%dd %dh %dm %ds %dms", dias, horas, minutos, segundos, milessegundos);
 	}
 
-	protected boolean erroAoExecutar(Contexto<?, ?> contexto, Exception excecao) throws Exception {
+	protected boolean erroAoExecutar(Contexto<?, ?> contexto, Exception e) throws Exception {
 		if (log().isErrorEnabled()) {
-			log().error("Erro ao executar");
+			log().error(String.format("(%s) erro ao executar", getNome()), e);
 		}
-		excecao.printStackTrace();
 		return PARAR;
 	}
 
@@ -69,11 +72,11 @@ public abstract class Comando {
 			if (inicio == null) {
 				this.inicio = Instant.now();
 			}
-			if (contexto == null) {
-				throw new IllegalArgumentException("Contexto n„o informado");
-			}
 			if (log().isInfoEnabled()) {
-				log().info("iniciado");
+				log().info(String.format("(%s) iniciado", getNome()));
+			}
+			if (contexto == null) {
+				throw new IllegalArgumentException("Contexto n√£o informado");
 			}
 			do {
 				try {
@@ -91,7 +94,7 @@ public abstract class Comando {
 		} finally {
 			this.duracao = Duration.between(inicio, Instant.now());
 			if (log().isInfoEnabled()) {
-				log().info("Executou em " + descreverTempo(getDuracao().toMillis()));
+				log().info(String.format("(%s) executou em [%s]", getNome(), descreverTempo(getDuracao().toMillis())));
 			}
 		}
 	}
@@ -115,7 +118,7 @@ public abstract class Comando {
 
 	protected boolean vaiRepetir(Contexto<?, ?> contexto) {
 		if (log().isDebugEnabled()) {
-			log().debug("Vai repetir?");
+			log().debug(String.format("(%s) vai repetir?", getNome()));
 		}
 		return PARAR;
 	}

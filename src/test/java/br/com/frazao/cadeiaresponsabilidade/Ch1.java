@@ -1,4 +1,4 @@
-package br.com.frazao.teste;
+package br.com.frazao.cadeiaresponsabilidade;
 
 import br.com.frazao.cadeiaresponsabilidade.CadeiaParalela;
 import br.com.frazao.cadeiaresponsabilidade.Comando;

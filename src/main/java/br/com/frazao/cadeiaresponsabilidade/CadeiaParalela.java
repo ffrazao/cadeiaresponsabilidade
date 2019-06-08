@@ -1,7 +1,6 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -12,29 +11,20 @@ public class CadeiaParalela extends Cadeia {
 
 	public CadeiaParalela() {
 		super();
-		if (log().isTraceEnabled()) {
-			log().trace("Nova Cadeia Paralela");
-		}
 	}
 
 	public CadeiaParalela(Collection<Comando> comandoList) {
 		super(comandoList);
-		if (log().isTraceEnabled()) {
-			log().trace("Nova Cadeia Paralela Collection<Comando> comandoList");
-		}
 	}
 
 	public CadeiaParalela(Comando... comandoList) {
-		this(Arrays.asList(comandoList));
-		if (log().isTraceEnabled()) {
-			log().trace("Nova Cadeia Paralela Comando... comandoList");
-		}
+		super(comandoList);
 	}
 
 	@Override
 	protected final void procedimento(Contexto<?, ?> contexto) throws Exception {
 		if (log().isDebugEnabled()) {
-			log().debug("Cadeia Paralela procedimento");
+			log().debug(String.format("(%s) cadeia paralela procedimento", getNome()));
 		}
 		List<Callable<Void>> callableList = new ArrayList<>();
 		getComandoList().stream().forEach((comando) -> callableList.add(() -> {
