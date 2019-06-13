@@ -10,7 +10,7 @@
 	<description>Implementação do design pattern cadeia de responsabilidades</description>
 	<packaging>jar</packaging>
 	<properties>
-		<java.version>1.11</java.version>
+		<java.version>1.8</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
