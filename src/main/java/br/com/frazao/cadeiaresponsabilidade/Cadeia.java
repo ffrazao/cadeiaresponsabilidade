@@ -2,28 +2,32 @@ package br.com.frazao.cadeiaresponsabilidade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 abstract class Cadeia extends Comando {
 
 	private boolean congelado = false;
 
-	private final List<Comando> sequencia = new ArrayList<>();
+	private final List<Comando> comandos = new ArrayList<>();
 
 	public Cadeia() {
 	}
 
-	public Cadeia(final Collection<Comando> sequencia) {
+	public Cadeia(final List<Comando> comandos) {
 		this();
-		if ((sequencia == null) || sequencia.isEmpty()) {
-			throw new IllegalArgumentException("Sequência de comando(s) não informado(s)");
-		}
-		sequencia.forEach(comando -> this.adicionarComando(comando));
+		this.adicionarComando(comandos);
 	}
 
-	public Cadeia(final Comando... sequencia) {
-		this(Arrays.asList(sequencia));
+	public Cadeia(final Comando... comandos) {
+		this(Arrays.asList(comandos));
+	}
+
+	public final void adicionarComando(final Comando... comandos) {
+		this.adicionarComando(Arrays.asList(comandos));
+	}
+	
+	public final void adicionarComando(final List<Comando> comandos) {
+		comandos.forEach(comando -> this.adicionarComando(comando));
 	}
 
 	public final void adicionarComando(final Comando comando) {
@@ -36,12 +40,12 @@ abstract class Cadeia extends Comando {
 		if (this.congelado) {
 			throw new IllegalStateException("Neste momento não é possível adicionar nenhum comando à cadeia");
 		}
-		this.getSequencia().add(comando);
+		this.getComandos().add(comando);
 	}
 
 	@Override
 	public final void executar(final Contexto<?, ?> contexto) throws Exception {
-		if ((this.getSequencia() == null) || this.getSequencia().isEmpty()) {
+		if ((this.getComandos() == null) || this.getComandos().isEmpty()) {
 			throw new IllegalStateException("Cadeia sem comando(s)");
 		}
 		try {
@@ -53,8 +57,8 @@ abstract class Cadeia extends Comando {
 		}
 	}
 
-	protected final List<Comando> getSequencia() {
-		return this.sequencia;
+	protected final List<Comando> getComandos() {
+		return this.comandos;
 	}
 
 }

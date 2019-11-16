@@ -7,7 +7,7 @@ public class TesteCadeia {
 	@Test
 	public void test() throws Exception {
 
-		System.out.println(MinhaBiblioteca.getInstance().getComandos());
+		System.out.println(MinhaBiblioteca.getInstance()/*.getComandos()*/);
 
 		if (1 == 1) {
 			return;

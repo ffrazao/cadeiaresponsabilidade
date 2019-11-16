@@ -1,9 +1,9 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
-import java.util.Set;
+import java.util.Collection;
 
 public interface Comandos {
 
-	Set<DescritorComando> getComandos();
+	Collection<DescritorComando> getComandos();
 
 }

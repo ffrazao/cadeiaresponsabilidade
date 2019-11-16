@@ -1,16 +1,20 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -18,47 +22,59 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Catalogo implements Comandos {
 
 	@XmlAttribute(name = "antes")
-	private String comandoAntes;
-
-	@XmlAttribute(name = "depois")
-	private String comandoDepois;
+	@XmlIDREF
+	private DescritorComando antes;
 
 	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final Set<DescritorComando> comandos = new HashSet<>();
+	private final List<DescritorComando> comandos = new ArrayList<>();
 
-	@XmlAttribute(name = "nome")
-	private String nomeCatalogo;
+	@XmlAttribute(name = "depois")
+	@XmlIDREF
+	private DescritorComando depois;
 
 	@XmlAttribute(name = "modelo")
-	private String nomeModeloCatalogo;
+	@XmlIDREF
+	private Catalogo modelo;
+
+	@XmlAttribute(name = "nome", required = true)
+    @XmlID
+	private String nome;
 
 	public Catalogo() {
 	}
 
-	public Catalogo(final String nomeCatalogo) {
-		if ((nomeCatalogo == null) || nomeCatalogo.trim().isEmpty()) {
-			throw new IllegalArgumentException("Nome não informado");
+	public Catalogo(final String nome) {
+		if ((nome == null) || nome.trim().isEmpty()) {
+			throw new IllegalArgumentException("Nome do catálogo não informado");
 		}
-		this.nomeCatalogo = nomeCatalogo;
+		this.nome = nome;
 	}
 
-	public Catalogo(final String nomeCatalogo, final DescritorComando... comandos) {
-		this(nomeCatalogo);
+	public Catalogo(final String nome, final Collection<DescritorComando> comandos) {
+		this(nome);
 		this.adicionarComando(comandos);
 	}
 
-	public Catalogo(final String nomeCatalogo, final DescritorComando comando) {
-		this(nomeCatalogo);
+	public Catalogo(final String nome, final DescritorComando... comandos) {
+		this(nome, Arrays.asList(comandos));
+	}
+
+	public Catalogo(final String nome, final DescritorComando comando) {
+		this(nome);
 		this.adicionarComando(comando);
 	}
 
+	public void adicionarComando(final Collection<DescritorComando> comandos) {
+		comandos.forEach((c) -> this.adicionarComando(c));
+	}
+
 	public void adicionarComando(final DescritorComando comando) {
-		this.getComandos().add(comando);
+		this.comandos.add(comando);
 	}
 
 	public void adicionarComando(final DescritorComando... comandos) {
-		Arrays.asList(comandos).forEach((c) -> this.adicionarComando(c));
+		this.adicionarComando(Arrays.asList(comandos));
 	}
 
 	@Override
@@ -70,58 +86,53 @@ public class Catalogo implements Comandos {
 			return false;
 		}
 		final Catalogo other = (Catalogo) obj;
-		return Objects.equals(this.nomeCatalogo, other.nomeCatalogo);
+		return Objects.equals(this.nome, other.nome);
+	}
+
+	public Optional<DescritorComando> getAntes() {
+		return Optional.ofNullable(this.antes);
 	}
 
 	public Optional<DescritorComando> getComando(final String nomeComando) {
-		return this.getComandos().stream().filter(c -> c.getNome().equals(nomeComando)).findFirst();
-	}
-
-	public String getComandoAntes() {
-		return this.comandoAntes;
-	}
-
-	public String getComandoDepois() {
-		return this.comandoDepois;
+		return this.comandos.stream().filter(c -> c.getNome().equals(nomeComando)).findFirst();
 	}
 
 	@Override
-	public Set<DescritorComando> getComandos() {
-		return this.comandos;
+	public List<DescritorComando> getComandos() {
+		return Collections.unmodifiableList(this.comandos);
 	}
 
-	public String getNomeCatalogo() {
-		return this.nomeCatalogo;
+	public Optional<DescritorComando> getDepois() {
+		return Optional.ofNullable(this.depois);
 	}
 
-	public String getNomeModeloCatalogo() {
-		return this.nomeModeloCatalogo;
+	public Optional<Catalogo> getModelo() {
+		return Optional.ofNullable(this.modelo);
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.nomeCatalogo);
+	public String getNome() {
+		return this.nome;
 	}
 
-	public void setComandoAntes(final String comandoAntes) {
-		this.comandoAntes = comandoAntes;
+	public void setAntes(final DescritorComando antes) {
+		this.antes = antes;
 	}
 
-	public void setComandoDepois(final String comandoDepois) {
-		this.comandoDepois = comandoDepois;
+	public void setDepois(final DescritorComando depois) {
+		this.depois = depois;
 	}
 
-	public void setNomeCatalogo(final String nomeCatalogo) {
-		this.nomeCatalogo = nomeCatalogo;
+	public void setModelo(final Catalogo modelo) {
+		this.modelo = modelo;
 	}
 
-	public void setNomeModeloCatalogo(final String nomeModeloCatalogo) {
-		this.nomeModeloCatalogo = nomeModeloCatalogo;
+	public void setNome(final String nome) {
+		this.nome = nome;
 	}
 
 	@Override
 	public String toString() {
-		return "Catalogo [" + this.nomeCatalogo + "]";
+		return "Catalogo [" + this.nome + "]";
 	}
 
 }

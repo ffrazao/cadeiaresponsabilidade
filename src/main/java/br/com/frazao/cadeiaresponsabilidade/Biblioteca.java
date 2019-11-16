@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,6 +37,30 @@ public class Biblioteca implements Comandos {
 	public Biblioteca() {
 	}
 
+	public void adicionarCatalogo(final Catalogo... catalogos) {
+		this.adicionarCatalogo(Arrays.asList(catalogos));
+	}
+
+	public void adicionarCatalogo(final Catalogo catalogo) {
+		this.catalogos.add(catalogo);
+	}
+
+	public void adicionarCatalogo(final Collection<Catalogo> catalogos) {
+		catalogos.forEach(catalogo -> this.adicionarCatalogo(catalogo));
+	}
+
+	public void adicionarComando(final Collection<DescritorComando> comandos) {
+		comandos.forEach(comando -> this.adicionarComando(comando));
+	}
+
+	public void adicionarComando(final DescritorComando... comandos) {
+		this.adicionarComando(Arrays.asList(comandos));
+	}
+
+	public void adicionarComando(final DescritorComando comando) {
+		this.comandos.add(comando);
+	}
+
 	public void carregar(final File nomeArquivo) throws Exception {
 		try (InputStream is = new FileInputStream(nomeArquivo)) {
 			this.carregar(is);
@@ -41,14 +68,11 @@ public class Biblioteca implements Comandos {
 	}
 
 	public void carregar(final InputStream arquivo) throws Exception {
-		try {
-			final JAXBContext context = JAXBContext.newInstance(this.getClass());
-			final Unmarshaller unmarshaller = context.createUnmarshaller();
-			final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
-			System.out.println(biblioteca);
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
+		final JAXBContext context = JAXBContext.newInstance(this.getClass());
+		final Unmarshaller unmarshaller = context.createUnmarshaller();
+		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
+		this.adicionarComando(biblioteca.getComandos());
+		this.adicionarCatalogo(biblioteca.getCatalogos());
 	}
 
 	public void carregar(final Package pacote) throws Exception {
@@ -71,17 +95,21 @@ public class Biblioteca implements Comandos {
 		this.carregar(new File(nomeArquivo));
 	}
 
-	public void executar(final String nomeCatalogo, final String nomeComando, final Contexto<?, ?> contexto) {
+	public Comando instanciar(final String nomeComando) {
+		return null;
+	}
 
+	public Comando instanciar(final String nomeCatalogo, final String nomeComando) {
+		return null;
 	}
 
 	public Set<Catalogo> getCatalogos() {
-		return this.catalogos;
+		return Collections.unmodifiableSet(this.catalogos);
 	}
 
 	@Override
 	public Set<DescritorComando> getComandos() {
-		return this.comandos;
+		return Collections.unmodifiableSet(this.comandos);
 	}
 
 }

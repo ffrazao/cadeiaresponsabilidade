@@ -14,8 +14,8 @@
 				classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
 		</cadeia>
 	</cadeia>
-	<catalogo nome="Base" antes="BaseAntesCmd"
-		depois="BaseDepoisCmd"></catalogo>
+	<catalogo nome="Base" antes="DIA"
+		depois="fogo"></catalogo>
 	<catalogo nome="Pessoa" modelo="Base"></catalogo>
 	<catalogo nome="Usuario" antes="" depois="" modelo="Base">
 		<comando nome="DIA"

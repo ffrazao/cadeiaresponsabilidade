@@ -1,7 +1,7 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -19,18 +19,21 @@ public class DescritorCadeia extends DescritorComando implements Comandos {
 
 	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final Set<DescritorComando> comandos = new HashSet<>();
+	private final List<DescritorComando> comandos = new ArrayList<>();
 
 	public CadeiaTipo getCadeiaTipo() {
 		return this.cadeiaTipo;
 	}
 
 	@Override
-	public Set<DescritorComando> getComandos() {
+	public List<DescritorComando> getComandos() {
 		return this.comandos;
 	}
 
 	public void setCadeiaTipo(final CadeiaTipo cadeiaTipo) {
+		if (cadeiaTipo == null) {
+			throw new NullPointerException();
+		}
 		this.cadeiaTipo = cadeiaTipo;
 	}
 

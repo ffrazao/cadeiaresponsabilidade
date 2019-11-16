@@ -1,6 +1,6 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
-import java.util.Collection;
+import java.util.List;
 
 public class CadeiaSequencial extends Cadeia {
 
@@ -8,12 +8,12 @@ public class CadeiaSequencial extends Cadeia {
 		super();
 	}
 
-	public CadeiaSequencial(final Collection<Comando> sequencia) {
-		super(sequencia);
+	public CadeiaSequencial(final List<Comando> comandos) {
+		super(comandos);
 	}
 
-	public CadeiaSequencial(final Comando... sequencia) {
-		super(sequencia);
+	public CadeiaSequencial(final Comando... comandos) {
+		super(comandos);
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class CadeiaSequencial extends Cadeia {
 		if (this.log().isDebugEnabled()) {
 			this.log().debug(String.format("(%s) cadeia sequenciada procedimento", this.getNome()));
 		}
-		for (final Comando comando : this.getSequencia()) {
+		for (final Comando comando : this.getComandos()) {
 			comando.executar(contexto);
 		}
 	}

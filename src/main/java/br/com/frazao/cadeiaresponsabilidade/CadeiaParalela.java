@@ -1,7 +1,6 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -13,12 +12,12 @@ public class CadeiaParalela extends Cadeia {
 		super();
 	}
 
-	public CadeiaParalela(final Collection<Comando> sequencia) {
-		super(sequencia);
+	public CadeiaParalela(final List<Comando> comandos) {
+		super(comandos);
 	}
 
-	public CadeiaParalela(final Comando... sequencia) {
-		super(sequencia);
+	public CadeiaParalela(final Comando... comandos) {
+		super(comandos);
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class CadeiaParalela extends Cadeia {
 			this.log().debug(String.format("(%s) cadeia paralela procedimento", this.getNome()));
 		}
 		final List<Callable<Void>> callableList = new ArrayList<>();
-		this.getSequencia().stream().forEach((comando) -> callableList.add(() -> {
+		this.getComandos().stream().forEach((comando) -> callableList.add(() -> {
 			comando.executar(contexto);
 			return null;
 		}));
