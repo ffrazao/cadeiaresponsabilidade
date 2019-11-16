@@ -2,6 +2,7 @@ package br.com.frazao.cadeiaresponsabilidade;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
@@ -13,33 +14,36 @@ public abstract class Comando {
 
 	protected final static boolean PARAR = false;
 
-	protected Duration duracao;
+	private Duration duracao;
 
-	protected Instant inicio;
+	private Instant inicio;
 
 	private Log log = null;
-	
-	public String getNome() {
-		return this.getClass().getName();
-	}
+
+	private String nome = null;
 
 	public Comando() {
 		super();
-		if (log().isTraceEnabled()) {
-			log().trace(String.format("(%s) novo comando", getNome()));
+		if (this.log().isTraceEnabled()) {
+			this.log().trace(String.format("(%s) novo comando", this.getNome()));
 		}
 	}
 
-	protected boolean antesProcedimento(Contexto<?, ?> contexto) {
-		if (log().isDebugEnabled()) {
-			log().debug(String.format("(%s) antes de executar", getNome()));
-		}
-		return CONTINUAR;
+	public Comando(final String nome) {
+		this();
+		this.nome = nome;
 	}
 
-	protected void depoisProcedimento(Contexto<?, ?> contexto) {
-		if (log().isTraceEnabled()) {
-			log().trace(String.format("(%s) depois de executar", getNome()));
+	protected boolean antesProcedimento(final Contexto<?, ?> contexto) {
+		if (this.log().isDebugEnabled()) {
+			this.log().debug(String.format("(%s) antes de executar", this.getNome()));
+		}
+		return Comando.CONTINUAR;
+	}
+
+	protected void depoisProcedimento(final Contexto<?, ?> contexto) {
+		if (this.log().isTraceEnabled()) {
+			this.log().trace(String.format("(%s) depois de executar", this.getNome()));
 		}
 	}
 
@@ -48,53 +52,66 @@ public abstract class Comando {
 			return "";
 		}
 
-		long dias = TimeUnit.MILLISECONDS.toDays(milessegundos);
+		final long dias = TimeUnit.MILLISECONDS.toDays(milessegundos);
 		milessegundos -= TimeUnit.DAYS.toMillis(dias);
-		long horas = TimeUnit.MILLISECONDS.toHours(milessegundos);
+		final long horas = TimeUnit.MILLISECONDS.toHours(milessegundos);
 		milessegundos -= TimeUnit.HOURS.toMillis(horas);
-		long minutos = TimeUnit.MILLISECONDS.toMinutes(milessegundos);
+		final long minutos = TimeUnit.MILLISECONDS.toMinutes(milessegundos);
 		milessegundos -= TimeUnit.MINUTES.toMillis(minutos);
-		long segundos = TimeUnit.MILLISECONDS.toSeconds(milessegundos);
+		final long segundos = TimeUnit.MILLISECONDS.toSeconds(milessegundos);
 		milessegundos -= TimeUnit.SECONDS.toMillis(segundos);
 
 		return String.format("%dd %dh %dm %ds %dms", dias, horas, minutos, segundos, milessegundos);
 	}
 
-	protected boolean erroAoExecutar(Contexto<?, ?> contexto, Exception e) throws Exception {
-		if (log().isErrorEnabled()) {
-			log().error(String.format("(%s) erro ao executar", getNome()), e);
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
 		}
-		return PARAR;
+		if (!(obj instanceof Comando)) {
+			return false;
+		}
+		final Comando other = (Comando) obj;
+		return Objects.equals(this.getNome(), other.getNome());
 	}
 
-	public void executar(Contexto<?, ?> contexto) throws Exception {
+	protected boolean erroAoExecutar(final Contexto<?, ?> contexto, final Exception e) throws Exception {
+		if (this.log().isErrorEnabled()) {
+			this.log().error(String.format("(%s) erro ao executar", this.getNome()), e);
+		}
+		return Comando.PARAR;
+	}
+
+	public void executar(final Contexto<?, ?> contexto) throws Exception {
 		try {
-			if (inicio == null) {
+			if (this.inicio == null) {
 				this.inicio = Instant.now();
 			}
-			if (log().isInfoEnabled()) {
-				log().info(String.format("(%s) iniciado", getNome()));
+			if (this.log().isInfoEnabled()) {
+				this.log().info(String.format("(%s) iniciado", this.getNome()));
 			}
 			if (contexto == null) {
 				throw new IllegalArgumentException("Contexto não informado");
 			}
 			do {
 				try {
-					if (!antesProcedimento(contexto)) {
+					if (!this.antesProcedimento(contexto)) {
 						break;
 					}
-					procedimento(contexto);
-					depoisProcedimento(contexto);
-				} catch (Exception e) {
-					if (!erroAoExecutar(contexto, e)) {
+					this.procedimento(contexto);
+					this.depoisProcedimento(contexto);
+				} catch (final Exception e) {
+					if (!this.erroAoExecutar(contexto, e)) {
 						throw e;
 					}
 				}
-			} while (vaiRepetir(contexto));
+			} while (this.vaiRepetir(contexto));
 		} finally {
-			this.duracao = Duration.between(inicio, Instant.now());
-			if (log().isInfoEnabled()) {
-				log().info(String.format("(%s) executou em [%s]", getNome(), descreverTempo(getDuracao().toMillis())));
+			this.duracao = Duration.between(this.inicio, Instant.now());
+			if (this.log().isInfoEnabled()) {
+				this.log().info(String.format("(%s) executou em [%s]", this.getNome(),
+						this.descreverTempo(this.getDuracao().toMillis())));
 			}
 		}
 	}
@@ -107,20 +124,29 @@ public abstract class Comando {
 		return this.inicio;
 	}
 
+	public String getNome() {
+		return this.nome == null ? this.getClass().getName() : this.nome;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.getNome());
+	}
+
 	protected Log log() {
-		if (log == null) {
-			log = LogFactory.getLog(getClass());
+		if (this.log == null) {
+			this.log = LogFactory.getLog(this.getClass());
 		}
-		return log;
+		return this.log;
 	}
 
 	protected abstract void procedimento(Contexto<?, ?> contexto) throws Exception;
 
-	protected boolean vaiRepetir(Contexto<?, ?> contexto) {
-		if (log().isDebugEnabled()) {
-			log().debug(String.format("(%s) vai repetir?", getNome()));
+	protected boolean vaiRepetir(final Contexto<?, ?> contexto) {
+		if (this.log().isDebugEnabled()) {
+			this.log().debug(String.format("(%s) vai repetir?", this.getNome()));
 		}
-		return PARAR;
+		return Comando.PARAR;
 	}
 
 }

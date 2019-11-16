@@ -4,12 +4,12 @@ import java.util.Map;
 
 public interface Contexto<K, V> extends Map<K, V> {
 
-	public Object getRequisicao();
+	Object getRequisicao();
 
-	public Object getResposta();
+	Object getResposta();
 
-	public void setRequisicao(Object requisicao);
+	void setRequisicao(Object requisicao);
 
-	public void setResposta(Object resposta);
+	void setResposta(Object resposta);
 
 }

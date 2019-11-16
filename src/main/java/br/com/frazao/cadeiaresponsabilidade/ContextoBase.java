@@ -14,23 +14,23 @@ public final class ContextoBase<K, V> extends HashMap<K, V> implements Contexto<
 		this(null);
 	}
 
-	public ContextoBase(Object requisicao) {
+	public ContextoBase(final Object requisicao) {
 		super();
-		setRequisicao(requisicao);
+		this.setRequisicao(requisicao);
 	}
 
 	@Override
 	public Object getRequisicao() {
-		return requisicao;
+		return this.requisicao;
 	}
 
 	@Override
 	public Object getResposta() {
-		return resposta;
+		return this.resposta;
 	}
 
 	@Override
-	public void setRequisicao(Object requisicao) {
+	public void setRequisicao(final Object requisicao) {
 		if (this.requisicao != null) {
 			throw new IllegalStateException("A requisição não pode ser redefinida!");
 		}
@@ -38,7 +38,7 @@ public final class ContextoBase<K, V> extends HashMap<K, V> implements Contexto<
 	}
 
 	@Override
-	public void setResposta(Object resposta) {
+	public void setResposta(final Object resposta) {
 		this.resposta = resposta;
 	}
 

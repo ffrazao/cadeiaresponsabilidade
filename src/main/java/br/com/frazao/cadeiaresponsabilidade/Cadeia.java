@@ -7,45 +7,45 @@ import java.util.List;
 
 abstract class Cadeia extends Comando {
 
-	protected List<Comando> comandoList = new ArrayList<>();
+	private boolean congelado = false;
 
-	protected boolean congelado = false;
+	private final List<Comando> sequencia = new ArrayList<>();
 
 	public Cadeia() {
 	}
 
-	public Cadeia(Collection<Comando> comandoList) {
+	public Cadeia(final Collection<Comando> sequencia) {
 		this();
-		if (comandoList == null || comandoList.isEmpty()) {
-			throw new IllegalArgumentException("Comandos não informados");
+		if ((sequencia == null) || sequencia.isEmpty()) {
+			throw new IllegalArgumentException("Sequência de comando(s) não informado(s)");
 		}
-		this.comandoList.addAll(comandoList);
+		sequencia.forEach(comando -> this.adicionarComando(comando));
 	}
 
-	public Cadeia(Comando... comandoList) {
-		this(Arrays.asList(comandoList));
+	public Cadeia(final Comando... sequencia) {
+		this(Arrays.asList(sequencia));
 	}
 
-	public final void adicionarComando(Comando comando) {
-		if (log().isDebugEnabled()) {
-			log().debug(String.format("(%) adicionando comando", getNome()));
+	public final void adicionarComando(final Comando comando) {
+		if (this.log().isDebugEnabled()) {
+			this.log().debug(String.format("(%) adicionando comando", this.getNome()));
 		}
 		if (comando == null) {
 			throw new IllegalArgumentException("O comando não pode ser nulo!");
 		}
-		if (congelado) {
+		if (this.congelado) {
 			throw new IllegalStateException("Neste momento não é possível adicionar nenhum comando à cadeia");
 		}
-		comandoList.add(comando);
+		this.getSequencia().add(comando);
 	}
 
 	@Override
-	public final void executar(Contexto<?, ?> contexto) throws Exception {
-		if (getComandoList() == null || getComandoList().isEmpty()) {
+	public final void executar(final Contexto<?, ?> contexto) throws Exception {
+		if ((this.getSequencia() == null) || this.getSequencia().isEmpty()) {
 			throw new IllegalStateException("Cadeia sem comando(s)");
 		}
 		try {
-			// Congelar a configura��o da lista de comandos
+			// Congelar a configuração da lista de comandos
 			this.congelado = true;
 			super.executar(contexto);
 		} finally {
@@ -53,8 +53,8 @@ abstract class Cadeia extends Comando {
 		}
 	}
 
-	protected final List<Comando> getComandoList() {
-		return comandoList;
+	protected final List<Comando> getSequencia() {
+		return this.sequencia;
 	}
 
 }

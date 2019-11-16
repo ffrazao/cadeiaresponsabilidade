@@ -13,21 +13,21 @@ public class CadeiaParalela extends Cadeia {
 		super();
 	}
 
-	public CadeiaParalela(Collection<Comando> comandoList) {
-		super(comandoList);
+	public CadeiaParalela(final Collection<Comando> sequencia) {
+		super(sequencia);
 	}
 
-	public CadeiaParalela(Comando... comandoList) {
-		super(comandoList);
+	public CadeiaParalela(final Comando... sequencia) {
+		super(sequencia);
 	}
 
 	@Override
-	protected final void procedimento(Contexto<?, ?> contexto) throws Exception {
-		if (log().isDebugEnabled()) {
-			log().debug(String.format("(%s) cadeia paralela procedimento", getNome()));
+	protected final void procedimento(final Contexto<?, ?> contexto) throws Exception {
+		if (this.log().isDebugEnabled()) {
+			this.log().debug(String.format("(%s) cadeia paralela procedimento", this.getNome()));
 		}
-		List<Callable<Void>> callableList = new ArrayList<>();
-		getComandoList().stream().forEach((comando) -> callableList.add(() -> {
+		final List<Callable<Void>> callableList = new ArrayList<>();
+		this.getSequencia().stream().forEach((comando) -> callableList.add(() -> {
 			comando.executar(contexto);
 			return null;
 		}));
