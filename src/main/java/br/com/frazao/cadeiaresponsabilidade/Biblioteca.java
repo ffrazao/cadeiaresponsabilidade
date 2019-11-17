@@ -68,7 +68,7 @@ public class Biblioteca implements Comandos {
 	}
 
 	public void carregar(final InputStream arquivo) throws Exception {
-		final JAXBContext context = JAXBContext.newInstance(this.getClass());
+		final JAXBContext context = JAXBContext.newInstance(Biblioteca.class);
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
 		this.adicionarComando(biblioteca.getComandos());
@@ -95,14 +95,6 @@ public class Biblioteca implements Comandos {
 		this.carregar(new File(nomeArquivo));
 	}
 
-	public Comando instanciar(final String nomeComando) {
-		return null;
-	}
-
-	public Comando instanciar(final String nomeCatalogo, final String nomeComando) {
-		return null;
-	}
-
 	public Set<Catalogo> getCatalogos() {
 		return Collections.unmodifiableSet(this.catalogos);
 	}
@@ -110,6 +102,17 @@ public class Biblioteca implements Comandos {
 	@Override
 	public Set<DescritorComando> getComandos() {
 		return Collections.unmodifiableSet(this.comandos);
+	}
+
+	public Comando instanciar(final String nomeComando) throws Exception {
+		final DescritorComando descritorComando = this.getComandos().stream()
+				.filter(c -> c.getNome().contentEquals(nomeComando)).findFirst().get();
+		final Comando result = descritorComando.getClasse().get().newInstance();
+		return result;
+	}
+
+	public Comando instanciar(final String nomeCatalogo, final String nomeComando) {
+		return null;
 	}
 
 }

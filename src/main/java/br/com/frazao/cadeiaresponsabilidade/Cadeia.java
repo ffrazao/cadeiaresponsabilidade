@@ -6,11 +6,15 @@ import java.util.List;
 
 abstract class Cadeia extends Comando {
 
-	private boolean congelado = false;
-
 	private final List<Comando> comandos = new ArrayList<>();
 
+	private boolean congelado = false;
+
 	public Cadeia() {
+	}
+
+	public Cadeia(final Comando... comandos) {
+		this(Arrays.asList(comandos));
 	}
 
 	public Cadeia(final List<Comando> comandos) {
@@ -18,16 +22,8 @@ abstract class Cadeia extends Comando {
 		this.adicionarComando(comandos);
 	}
 
-	public Cadeia(final Comando... comandos) {
-		this(Arrays.asList(comandos));
-	}
-
 	public final void adicionarComando(final Comando... comandos) {
 		this.adicionarComando(Arrays.asList(comandos));
-	}
-	
-	public final void adicionarComando(final List<Comando> comandos) {
-		comandos.forEach(comando -> this.adicionarComando(comando));
 	}
 
 	public final void adicionarComando(final Comando comando) {
@@ -43,8 +39,12 @@ abstract class Cadeia extends Comando {
 		this.getComandos().add(comando);
 	}
 
+	public final void adicionarComando(final List<Comando> comandos) {
+		comandos.forEach(comando -> this.adicionarComando(comando));
+	}
+
 	@Override
-	public final void executar(final Contexto<?, ?> contexto) throws Exception {
+	public final <k, v> void executar(final Contexto<k, v> contexto) throws Exception {
 		if ((this.getComandos() == null) || this.getComandos().isEmpty()) {
 			throw new IllegalStateException("Cadeia sem comando(s)");
 		}

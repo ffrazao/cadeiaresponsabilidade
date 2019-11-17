@@ -8,16 +8,16 @@ public class CadeiaSequencial extends Cadeia {
 		super();
 	}
 
-	public CadeiaSequencial(final List<Comando> comandos) {
-		super(comandos);
-	}
-
 	public CadeiaSequencial(final Comando... comandos) {
 		super(comandos);
 	}
 
+	public CadeiaSequencial(final List<Comando> comandos) {
+		super(comandos);
+	}
+
 	@Override
-	protected final void procedimento(final Contexto<?, ?> contexto) throws Exception {
+	protected final <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
 		if (this.log().isDebugEnabled()) {
 			this.log().debug(String.format("(%s) cadeia sequenciada procedimento", this.getNome()));
 		}

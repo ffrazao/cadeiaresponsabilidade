@@ -12,16 +12,16 @@ public class CadeiaParalela extends Cadeia {
 		super();
 	}
 
-	public CadeiaParalela(final List<Comando> comandos) {
-		super(comandos);
-	}
-
 	public CadeiaParalela(final Comando... comandos) {
 		super(comandos);
 	}
 
+	public CadeiaParalela(final List<Comando> comandos) {
+		super(comandos);
+	}
+
 	@Override
-	protected final void procedimento(final Contexto<?, ?> contexto) throws Exception {
+	protected final <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
 		if (this.log().isDebugEnabled()) {
 			this.log().debug(String.format("(%s) cadeia paralela procedimento", this.getNome()));
 		}

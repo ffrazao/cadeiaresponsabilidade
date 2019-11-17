@@ -17,7 +17,7 @@ public class DescritorComando {
 	private Class<? extends Comando> classe;
 
 	@XmlAttribute(required = true)
-    @XmlID
+	@XmlID
 	private String nome;
 
 	@Override

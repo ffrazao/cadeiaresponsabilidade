@@ -38,7 +38,7 @@ public class Catalogo implements Comandos {
 	private Catalogo modelo;
 
 	@XmlAttribute(name = "nome", required = true)
-    @XmlID
+	@XmlID
 	private String nome;
 
 	public Catalogo() {

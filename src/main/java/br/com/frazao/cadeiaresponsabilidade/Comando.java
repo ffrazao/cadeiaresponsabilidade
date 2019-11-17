@@ -34,14 +34,14 @@ public abstract class Comando {
 		this.nome = nome;
 	}
 
-	protected boolean antesProcedimento(final Contexto<?, ?> contexto) {
+	protected <k, v> boolean antesProcedimento(final Contexto<k, v> contexto) {
 		if (this.log().isDebugEnabled()) {
 			this.log().debug(String.format("(%s) antes de executar", this.getNome()));
 		}
 		return Comando.CONTINUAR;
 	}
 
-	protected void depoisProcedimento(final Contexto<?, ?> contexto) {
+	protected <k, v> void depoisProcedimento(final Contexto<k, v> contexto) {
 		if (this.log().isTraceEnabled()) {
 			this.log().trace(String.format("(%s) depois de executar", this.getNome()));
 		}
@@ -76,14 +76,14 @@ public abstract class Comando {
 		return Objects.equals(this.getNome(), other.getNome());
 	}
 
-	protected boolean erroAoExecutar(final Contexto<?, ?> contexto, final Exception e) throws Exception {
+	protected <k, v> boolean erroAoExecutar(final Contexto<k, v> contexto, final Exception e) throws Exception {
 		if (this.log().isErrorEnabled()) {
 			this.log().error(String.format("(%s) erro ao executar", this.getNome()), e);
 		}
 		return Comando.PARAR;
 	}
 
-	public void executar(final Contexto<?, ?> contexto) throws Exception {
+	public <k, v> void executar(final Contexto<k, v> contexto) throws Exception {
 		try {
 			if (this.inicio == null) {
 				this.inicio = Instant.now();
@@ -140,9 +140,9 @@ public abstract class Comando {
 		return this.log;
 	}
 
-	protected abstract void procedimento(Contexto<?, ?> contexto) throws Exception;
+	protected abstract <k, v> void procedimento(Contexto<k, v> contexto) throws Exception;
 
-	protected boolean vaiRepetir(final Contexto<?, ?> contexto) {
+	protected <k, v> boolean vaiRepetir(final Contexto<k, v> contexto) {
 		if (this.log().isDebugEnabled()) {
 			this.log().debug(String.format("(%s) vai repetir?", this.getNome()));
 		}
