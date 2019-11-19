@@ -1,6 +1,7 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,13 +22,18 @@ public class DescritorCadeia extends DescritorComando implements Comandos {
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
 	private final List<DescritorComando> comandos = new ArrayList<>();
 
+	@Override
+	public void adicionarComando(final DescritorComando comando) {
+		this.comandos.add(comando);
+	}
+
 	public CadeiaTipo getCadeiaTipo() {
 		return this.cadeiaTipo;
 	}
 
 	@Override
 	public List<DescritorComando> getComandos() {
-		return this.comandos;
+		return Collections.unmodifiableList(this.comandos);
 	}
 
 	public void setCadeiaTipo(final CadeiaTipo cadeiaTipo) {

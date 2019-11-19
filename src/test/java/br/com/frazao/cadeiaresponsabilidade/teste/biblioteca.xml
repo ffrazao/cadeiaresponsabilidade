@@ -1,35 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <biblioteca>
-	<comando nome="DIA"
-		classe="br.com.frazao.cadeiaresponsabilidade.C1"></comando>
+
+	<comando nome="DIA" classe="br.com.frazao.cadeiaresponsabilidade.C1"></comando>
+
 	<cadeia nome="nuvem" tipo="PARALELA">
-		<comando nome="agua"
-			classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
-		<comando nome="vento"
-			classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
+		<comando nome="agua"  classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
+		<comando nome="vento" classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
 		<cadeia nome="fogo">
-			<comando nome="oxigenio"
-				classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
-			<comando nome="carbono"
-				classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
+			<comando nome="oxigenio" classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
+			<comando nome="carbono"  classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
 		</cadeia>
 	</cadeia>
-	<catalogo nome="Base" antes="DIA"
-		depois="fogo"></catalogo>
-	<catalogo nome="Pessoa" modelo="Base"></catalogo>
+	
+	<catalogo nome="Base" antes="DIA" depois="fogo">
+	</catalogo>
+
+	<catalogo nome="Pessoa" modelo="Base">
+	</catalogo>
+
 	<catalogo nome="Usuario" antes="" depois="" modelo="Base">
-		<comando nome="DIA"
-			classe="br.com.frazao.cadeiaresponsabilidade.C1"></comando>
+		<comando nome="DIA" classe="br.com.frazao.cadeiaresponsabilidade.C1"></comando>
 		<cadeia nome="nuvem">
-			<comando nome="agua"
-				classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
-			<comando nome="vento"
-				classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
+			<comando nome="agua"  classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
+			<comando nome="vento" classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
 			<cadeia nome="fogo">
-				<comando nome="oxigenio"
-					classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
-				<comando nome="carbono"
-					classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
+				<comando nome="oxigenio" classe="br.com.frazao.cadeiaresponsabilidade.C2"></comando>
+				<comando nome="carbono"  classe="br.com.frazao.cadeiaresponsabilidade.C3"></comando>
 			</cadeia>
 		</cadeia>
 	</catalogo>

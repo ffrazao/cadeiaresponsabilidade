@@ -65,16 +65,9 @@ public class Catalogo implements Comandos {
 		this.adicionarComando(comando);
 	}
 
-	public void adicionarComando(final Collection<DescritorComando> comandos) {
-		comandos.forEach((c) -> this.adicionarComando(c));
-	}
-
+	@Override
 	public void adicionarComando(final DescritorComando comando) {
 		this.comandos.add(comando);
-	}
-
-	public void adicionarComando(final DescritorComando... comandos) {
-		this.adicionarComando(Arrays.asList(comandos));
 	}
 
 	@Override
@@ -91,10 +84,6 @@ public class Catalogo implements Comandos {
 
 	public Optional<DescritorComando> getAntes() {
 		return Optional.ofNullable(this.antes);
-	}
-
-	public Optional<DescritorComando> getComando(final String nomeComando) {
-		return this.comandos.stream().filter(c -> c.getNome().equals(nomeComando)).findFirst();
 	}
 
 	@Override
