@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 public class CadeiaParalela extends Cadeia {
 
@@ -22,8 +23,8 @@ public class CadeiaParalela extends Cadeia {
 
 	@Override
 	protected final <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
-		if (this.log().isDebugEnabled()) {
-			this.log().debug(String.format("(%s) cadeia paralela procedimento", this.getNome()));
+		if (this.log().isLoggable(Level.CONFIG)) {
+			this.log().config(String.format("(%s) cadeia paralela procedimento", this.getNome()));
 		}
 		final List<Callable<Void>> callableList = new ArrayList<>();
 		this.getComandos().stream().forEach((comando) -> callableList.add(() -> {

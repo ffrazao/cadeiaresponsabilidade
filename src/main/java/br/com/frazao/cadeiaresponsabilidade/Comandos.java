@@ -22,7 +22,7 @@ public interface Comandos {
 
 	default Optional<DescritorComando> getComando(final String nomeComando,
 			final Collection<DescritorComando> comandos) {
-		final Optional<DescritorComando> result = this.getComandos().stream()
+		final Optional<DescritorComando> result = comandos.stream()
 				.filter(c -> c.getNome().contentEquals(nomeComando)).findFirst();
 		return result;
 	}

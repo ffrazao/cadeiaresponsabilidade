@@ -3,7 +3,6 @@ package br.com.frazao.cadeiaresponsabilidade.teste;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import br.com.frazao.cadeiaresponsabilidade.BibliotecaSpring;
@@ -13,7 +12,6 @@ import br.com.frazao.cadeiaresponsabilidade.Comando;
 import br.com.frazao.cadeiaresponsabilidade.Contexto;
 import br.com.frazao.cadeiaresponsabilidade.ContextoBase;
 
-@SpringBootApplication
 @ComponentScan(basePackages = {"br.com.frazao.cadeiaresponsabilidade", "br.com.frazao.cadeiaresponsabilidade.teste"})
 public class TesteCadeia {
 	

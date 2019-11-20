@@ -54,13 +54,17 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	public void carregar(final InputStream arquivo) throws Exception {
-		final JAXBContext context = JAXBContext.newInstance(Biblioteca.class);
+		final JAXBContext context = JAXBContext.newInstance(this.getClass());
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
 		this.adicionarComando(biblioteca.getComandos());
 		this.adicionarCatalogo(biblioteca.getCatalogos());
 	}
 
+	public void carregar(final Class<?> classe) throws Exception {
+		this.carregar(classe.getPackage());
+	}
+	
 	public void carregar(final Package pacote) throws Exception {
 		Resource[] rs;
 		try {
@@ -119,6 +123,9 @@ public class Biblioteca implements Comandos, Catalogos {
 						this.instanciar(c.getNome(), ((DescritorCadeia) descritorComando).getComandos()));
 			}
 		} else {
+			if (descritorComando.getClass() == null) {
+				descritorComando.setClasse(this.getComando(descritorComando.getNome()).get().getClasse().get());
+			}
 			result = this.instanciar(descritorComando.getClasse());
 		}
 

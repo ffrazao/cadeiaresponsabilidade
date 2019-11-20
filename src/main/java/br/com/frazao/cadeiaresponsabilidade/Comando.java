@@ -4,9 +4,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Comando {
 
@@ -18,14 +17,14 @@ public abstract class Comando {
 
 	private Instant inicio;
 
-	private Log log = null;
+	private Logger log = null;
 
 	private String nome = null;
 
 	public Comando() {
 		super();
-		if (this.log().isTraceEnabled()) {
-			this.log().trace(String.format("(%s) novo comando", this.getNome()));
+		if (this.log().isLoggable(Level.FINER)) {
+			this.log().finer(String.format("(%s) novo comando", this.getNome()));
 		}
 	}
 
@@ -35,15 +34,15 @@ public abstract class Comando {
 	}
 
 	protected <k, v> boolean antesProcedimento(final Contexto<k, v> contexto) {
-		if (this.log().isDebugEnabled()) {
-			this.log().debug(String.format("(%s) antes de executar", this.getNome()));
+		if (this.log().isLoggable(Level.CONFIG)) {
+			this.log().config(String.format("(%s) antes de executar", this.getNome()));
 		}
 		return Comando.CONTINUAR;
 	}
 
 	protected <k, v> void depoisProcedimento(final Contexto<k, v> contexto) {
-		if (this.log().isTraceEnabled()) {
-			this.log().trace(String.format("(%s) depois de executar", this.getNome()));
+		if (this.log().isLoggable(Level.FINER)) {
+			this.log().finer(String.format("(%s) depois de executar", this.getNome()));
 		}
 	}
 
@@ -77,8 +76,8 @@ public abstract class Comando {
 	}
 
 	protected <k, v> boolean erroAoExecutar(final Contexto<k, v> contexto, final Exception e) throws Exception {
-		if (this.log().isErrorEnabled()) {
-			this.log().error(String.format("(%s) erro ao executar", this.getNome()), e);
+		if (this.log().isLoggable(Level.SEVERE)) {
+			this.log().severe(String.format("(%s) erro ao executar, [%s]", this.getNome(), e));
 		}
 		return Comando.PARAR;
 	}
@@ -88,7 +87,7 @@ public abstract class Comando {
 			if (this.inicio == null) {
 				this.inicio = Instant.now();
 			}
-			if (this.log().isInfoEnabled()) {
+			if (this.log().isLoggable(Level.INFO)) {
 				this.log().info(String.format("(%s) iniciado", this.getNome()));
 			}
 			if (contexto == null) {
@@ -109,7 +108,7 @@ public abstract class Comando {
 			} while (this.vaiRepetir(contexto));
 		} finally {
 			this.duracao = Duration.between(this.inicio, Instant.now());
-			if (this.log().isInfoEnabled()) {
+			if (this.log().isLoggable(Level.INFO)) {
 				this.log().info(String.format("(%s) executou em [%s]", this.getNome(),
 						this.descreverTempo(this.getDuracao().toMillis())));
 			}
@@ -133,9 +132,9 @@ public abstract class Comando {
 		return Objects.hash(this.getNome());
 	}
 
-	protected Log log() {
+	protected Logger log() {
 		if (this.log == null) {
-			this.log = LogFactory.getLog(this.getClass());
+			this.log = Logger.getLogger(this.getClass().getName());
 		}
 		return this.log;
 	}
@@ -143,8 +142,8 @@ public abstract class Comando {
 	protected abstract <k, v> void procedimento(Contexto<k, v> contexto) throws Exception;
 
 	protected <k, v> boolean vaiRepetir(final Contexto<k, v> contexto) {
-		if (this.log().isDebugEnabled()) {
-			this.log().debug(String.format("(%s) vai repetir?", this.getNome()));
+		if (this.log().isLoggable(Level.CONFIG)) {
+			this.log().config(String.format("(%s) vai repetir?", this.getNome()));
 		}
 		return Comando.PARAR;
 	}

@@ -2,7 +2,9 @@ package br.com.frazao.cadeiaresponsabilidade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 abstract class Cadeia extends Comando {
 
@@ -27,8 +29,8 @@ abstract class Cadeia extends Comando {
 	}
 
 	public final void adicionarComando(final Comando comando) {
-		if (this.log().isDebugEnabled()) {
-			this.log().debug(String.format("(%) adicionando comando", this.getNome()));
+		if (this.log().isLoggable(Level.CONFIG)) {
+			this.log().config(String.format("(%) adicionando comando", this.getNome()));
 		}
 		if (comando == null) {
 			throw new IllegalArgumentException("O comando não pode ser nulo!");
@@ -36,7 +38,7 @@ abstract class Cadeia extends Comando {
 		if (this.congelado) {
 			throw new IllegalStateException("Neste momento não é possível adicionar nenhum comando à cadeia");
 		}
-		this.getComandos().add(comando);
+		this.comandos.add(comando);
 	}
 
 	public final void adicionarComando(final List<Comando> comandos) {
@@ -45,7 +47,7 @@ abstract class Cadeia extends Comando {
 
 	@Override
 	public final <k, v> void executar(final Contexto<k, v> contexto) throws Exception {
-		if ((this.getComandos() == null) || this.getComandos().isEmpty()) {
+		if ((this.comandos == null) || this.comandos.isEmpty()) {
 			throw new IllegalStateException("Cadeia sem comando(s)");
 		}
 		try {
@@ -58,7 +60,7 @@ abstract class Cadeia extends Comando {
 	}
 
 	protected final List<Comando> getComandos() {
-		return this.comandos;
+		return Collections.unmodifiableList(this.comandos);
 	}
 
 }
