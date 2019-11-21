@@ -3,6 +3,7 @@ package br.com.frazao.cadeiaresponsabilidade;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -15,20 +16,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescritorCadeia extends DescritorComando implements Comandos {
 
-	@XmlAttribute(name = "tipo", required = false)
-	private CadeiaTipo cadeiaTipo = CadeiaTipo.SEQUENCIAL;
-
 	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final List<DescritorComando> comandos = new ArrayList<>();
+	private List<DescritorComando> comandos = new ArrayList<>();
+
+	@XmlAttribute(name = "tipo")
+	private CadeiaTipo tipo;
 
 	@Override
 	public void adicionarComando(final DescritorComando comando) {
 		this.comandos.add(comando);
-	}
-
-	public CadeiaTipo getCadeiaTipo() {
-		return this.cadeiaTipo;
 	}
 
 	@Override
@@ -36,11 +33,19 @@ public class DescritorCadeia extends DescritorComando implements Comandos {
 		return Collections.unmodifiableList(this.comandos);
 	}
 
-	public void setCadeiaTipo(final CadeiaTipo cadeiaTipo) {
-		if (cadeiaTipo == null) {
+	public Optional<CadeiaTipo> getTipo() {
+		return Optional.ofNullable(this.tipo);
+	}
+
+	public void setComandos(final List<DescritorComando> comados) {
+		this.comandos = comados;
+	}
+
+	public void setTipo(final CadeiaTipo tipo) {
+		if (tipo == null) {
 			throw new NullPointerException();
 		}
-		this.cadeiaTipo = cadeiaTipo;
+		this.tipo = tipo;
 	}
 
 }

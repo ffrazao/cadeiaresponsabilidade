@@ -1,12 +1,12 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,7 +27,7 @@ public class Catalogo implements Comandos {
 
 	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final List<DescritorComando> comandos = new ArrayList<>();
+	private final Set<DescritorComando> comandos = new HashSet<>();
 
 	@XmlAttribute(name = "depois")
 	@XmlIDREF
@@ -87,8 +87,8 @@ public class Catalogo implements Comandos {
 	}
 
 	@Override
-	public List<DescritorComando> getComandos() {
-		return Collections.unmodifiableList(this.comandos);
+	public Set<DescritorComando> getComandos() {
+		return Collections.unmodifiableSet(this.comandos);
 	}
 
 	public Optional<DescritorComando> getDepois() {

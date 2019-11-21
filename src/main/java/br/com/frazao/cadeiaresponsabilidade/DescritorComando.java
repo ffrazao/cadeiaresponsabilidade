@@ -20,6 +20,9 @@ public class DescritorComando {
 	@XmlID
 	private String nome;
 
+	@XmlAttribute
+	private Integer ordem;
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -40,6 +43,10 @@ public class DescritorComando {
 		return this.nome;
 	}
 
+	public Optional<Integer> getOrdem() {
+		return Optional.ofNullable(this.ordem);
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.nome);
@@ -47,6 +54,10 @@ public class DescritorComando {
 
 	public void setClasse(final Class<? extends Comando> classe) {
 		this.classe = classe;
+	}
+
+	public void setOrdem(final Integer ordem) {
+		this.ordem = ordem;
 	}
 
 }

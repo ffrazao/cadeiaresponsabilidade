@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -47,6 +49,10 @@ public class Biblioteca implements Comandos, Catalogos {
 		this.comandos.add(comando);
 	}
 
+	public void carregar(final Class<?> classe) throws Exception {
+		this.carregar(classe.getPackage());
+	}
+
 	public void carregar(final File nomeArquivo) throws Exception {
 		try (InputStream is = new FileInputStream(nomeArquivo)) {
 			this.carregar(is);
@@ -54,17 +60,13 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	public void carregar(final InputStream arquivo) throws Exception {
-		final JAXBContext context = JAXBContext.newInstance(this.getClass());
+		final JAXBContext context = JAXBContext.newInstance(Biblioteca.class);
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
 		this.adicionarComando(biblioteca.getComandos());
 		this.adicionarCatalogo(biblioteca.getCatalogos());
 	}
 
-	public void carregar(final Class<?> classe) throws Exception {
-		this.carregar(classe.getPackage());
-	}
-	
 	public void carregar(final Package pacote) throws Exception {
 		Resource[] rs;
 		try {
@@ -104,17 +106,18 @@ public class Biblioteca implements Comandos, Catalogos {
 		return this.instanciar(nomeComando, this.getComandos());
 	}
 
+	// instanciador de comando
 	protected Comando instanciar(final String nomeComando, final Collection<DescritorComando> comandos)
 			throws Exception {
 		final DescritorComando descritorComando = this.getComando(nomeComando, comandos).get();
 
 		Comando result = null;
 		if (descritorComando instanceof DescritorCadeia) {
-			switch (((DescritorCadeia) descritorComando).getCadeiaTipo()) {
+			switch (((DescritorCadeia) descritorComando).getTipo().get()) {
 			case SEQUENCIAL:
 				result = CadeiaSequencial.class.newInstance();
 				break;
-			case PARALELA:
+			case PARALELO:
 				result = CadeiaParalela.class.newInstance();
 				break;
 			}
@@ -123,7 +126,7 @@ public class Biblioteca implements Comandos, Catalogos {
 						this.instanciar(c.getNome(), ((DescritorCadeia) descritorComando).getComandos()));
 			}
 		} else {
-			if (descritorComando.getClass() == null) {
+			if (!descritorComando.getClasse().isPresent()) {
 				descritorComando.setClasse(this.getComando(descritorComando.getNome()).get().getClasse().get());
 			}
 			result = this.instanciar(descritorComando.getClasse());
@@ -140,15 +143,15 @@ public class Biblioteca implements Comandos, Catalogos {
 		final Comando comando = this.instanciar(nomeComando, catalogo.getComandos());
 
 		Comando result = comando;
-		if ((catalogo.getAntes() != null) || (catalogo.getDepois() != null)) {
+		if (catalogo.getAntes().isPresent() || catalogo.getDepois().isPresent()) {
 			result = new CadeiaSequencial();
-			if (catalogo.getAntes() != null) {
+			if (catalogo.getAntes().isPresent()) {
 				((Cadeia) result).adicionarComando(this.instanciar(catalogo.getAntes().get().getNome()));
 			}
 
 			((Cadeia) result).adicionarComando(comando);
 
-			if (catalogo.getDepois() != null) {
+			if (catalogo.getDepois().isPresent()) {
 				((Cadeia) result).adicionarComando(this.instanciar(catalogo.getDepois().get().getNome()));
 			}
 		}
@@ -156,20 +159,26 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	protected void mergeComandos(final Comandos base, final Comandos modelo) {
+		// remover ordem comandos da cadeia não ordenados
+		if (base instanceof DescritorCadeia) {
+			for (final DescritorComando baseDc : base.getComandos()) {
+				final Integer ordem = baseDc.getOrdem().orElse(null);
+				baseDc.setOrdem((ordem == null) || (ordem < 0) ? null : ordem);
+			}
+		}
 
 		for (final DescritorComando modeloDc : modelo.getComandos()) {
 			boolean encontrou = false;
 			for (final DescritorComando baseDc : base.getComandos()) {
-				// se o comando nao tiver a classe definida
-				if ((baseDc.getClasse() == null) && !(baseDc instanceof DescritorCadeia)) {
-					// buscar a classe nos comandos genéricos
-					baseDc.setClasse(this.getComando(baseDc.getNome()).get().getClasse().get());
-				}
 				// verificar se a base já tem o comando
 				if (baseDc.getNome().equals(modeloDc.getNome())) {
 					encontrou = true;
 					// se for cadeia, fazer o merge dos comandos da cadeia
 					if (baseDc instanceof DescritorCadeia) {
+						if (!((DescritorCadeia) baseDc).getTipo().isPresent()
+								&& ((DescritorCadeia) modeloDc).getTipo().isPresent()) {
+							((DescritorCadeia) baseDc).setTipo(((DescritorCadeia) modeloDc).getTipo().get());
+						}
 						this.mergeComandos(((DescritorCadeia) baseDc), ((DescritorCadeia) modeloDc));
 					}
 					break;
@@ -179,24 +188,45 @@ public class Biblioteca implements Comandos, Catalogos {
 				base.adicionarComando(modeloDc);
 			}
 		}
+
+		// ordenar comandos da cadeia
+		if (base instanceof DescritorCadeia) {
+			int cont = 0;
+			final List<Integer> e = base.getComandos().stream().filter(c -> c.getOrdem().isPresent())
+					.map(c -> c.getOrdem().get()).collect(Collectors.toList());
+			for (final DescritorComando baseDc : base.getComandos()) {
+				if (!baseDc.getOrdem().isPresent()) {
+					do {
+					} while (e.contains(Math.abs(--cont)));
+					baseDc.setOrdem(cont);
+				}
+			}
+
+			((DescritorCadeia) base)
+					.setComandos(((DescritorCadeia) base).getComandos().stream()
+							.sorted(((a, b) -> new Integer(Math.abs(a.getOrdem().get()))
+									.compareTo(new Integer(Math.abs(b.getOrdem().get())))))
+							.collect(Collectors.toList()));
+		}
 	}
 
-	protected Catalogo montarCatalogo(final Catalogo base, final Optional<Catalogo> modelo) {
-		if (!modelo.isPresent()) {
+	protected Catalogo montarCatalogo(final Catalogo base, final Optional<Catalogo> modeloOpt) {
+		if (!modeloOpt.isPresent()) {
 			return base;
 		}
+		final Catalogo modelo = modeloOpt.get();
 
-		if (!base.getAntes().isPresent() && modelo.get().getAntes().isPresent()) {
-			base.setAntes(modelo.get().getAntes().get());
+		if (!base.getAntes().isPresent() && modelo.getAntes().isPresent()) {
+			base.setAntes(modelo.getAntes().get());
 		}
-		if (!base.getDepois().isPresent() && modelo.get().getDepois().isPresent()) {
-			base.setDepois(modelo.get().getDepois().get());
+		if (!base.getDepois().isPresent() && modelo.getDepois().isPresent()) {
+			base.setDepois(modelo.getDepois().get());
 		}
 
 		// merge dos comandos
-		this.mergeComandos(base, modelo.get());
+		this.mergeComandos(base, modelo);
 
-		return this.montarCatalogo(base, modelo.get().getModelo());
+		return this.montarCatalogo(base, modelo.getModelo());
 	}
 
 }
