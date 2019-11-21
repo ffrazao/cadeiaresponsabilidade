@@ -20,17 +20,22 @@ public abstract class Comando {
 	private Logger log = null;
 
 	private String nome = null;
+	
+	Integer ordem;
 
 	public Comando() {
 		super();
 		if (this.log().isLoggable(Level.FINER)) {
-			this.log().finer(String.format("(%s) novo comando", this.getNome()));
+			this.log().finer(String.format("(%s) novo comando", this.getClass().getName()));
 		}
 	}
 
 	public Comando(final String nome) {
 		this();
 		this.nome = nome;
+		if (this.log().isLoggable(Level.FINER)) {
+			this.log().finer(String.format("(%s) novo comando", this.getNome()));
+		}
 	}
 
 	protected <k, v> boolean antesProcedimento(final Contexto<k, v> contexto) {
@@ -140,6 +145,10 @@ public abstract class Comando {
 	}
 
 	protected abstract <k, v> void procedimento(Contexto<k, v> contexto) throws Exception;
+
+	void setNome(final String nome) {
+		this.nome = nome;
+	}
 
 	protected <k, v> boolean vaiRepetir(final Contexto<k, v> contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {

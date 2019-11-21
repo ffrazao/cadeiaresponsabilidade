@@ -1,7 +1,5 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
-import java.util.Optional;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -26,8 +24,8 @@ public class BibliotecaSpring extends Biblioteca implements BeanFactoryAware {
 	}
 
 	@Override
-	protected Comando instanciar(final Optional<Class<? extends Comando>> classe) throws Exception {
-		return this.beanFactory.getBean(classe.get());
+	protected Comando instanciar(final Class<? extends Comando> classe) throws Exception {
+		return this.beanFactory.getBean(classe);
 	}
 
 	@Override

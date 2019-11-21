@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 abstract class Cadeia extends Comando {
 
-	private final List<Comando> comandos = new ArrayList<>();
+	private List<Comando> comandos = new ArrayList<>();
 
 	private boolean congelado = false;
 
@@ -61,6 +61,10 @@ abstract class Cadeia extends Comando {
 
 	protected final List<Comando> getComandos() {
 		return Collections.unmodifiableList(this.comandos);
+	}
+
+	final void setComandos(final List<Comando> comandos) {
+		this.comandos = comandos;
 	}
 
 }
