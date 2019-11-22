@@ -33,9 +33,9 @@ public class Biblioteca implements Comandos, Catalogos {
 	@XmlElement(name = "catalogo")
 	private final Set<Catalogo> catalogos = new HashSet<>();
 
-	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
-			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final Set<DescritorComando> comandos = new HashSet<>();
+	@XmlElements({ @XmlElement(name = "comando", type = ComandoDescritor.class),
+			@XmlElement(name = "cadeia", type = CadeiaDescritor.class) })
+	private final Set<ComandoDescritor> comandos = new HashSet<>();
 
 	public Biblioteca() {
 	}
@@ -46,7 +46,7 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	@Override
-	public void adicionarComando(final DescritorComando comando) {
+	public void adicionarComando(final ComandoDescritor comando) {
 		this.comandos.add(comando);
 	}
 
@@ -98,7 +98,7 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	@Override
-	public Set<DescritorComando> getComandos() {
+	public Set<ComandoDescritor> getComandos() {
 		return Collections.unmodifiableSet(this.comandos);
 	}
 
@@ -112,18 +112,18 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	// instanciador de comando
-	Comando instanciar(final String nomeComando, final Collection<DescritorComando> comandos)
+	Comando instanciar(final String nomeComando, final Collection<ComandoDescritor> comandos)
 			throws Exception {
-		final DescritorComando descritorComando = this.getComando(nomeComando, comandos).get();
+		final ComandoDescritor comandoDescritor = this.getComando(nomeComando, comandos).get();
 
 		Comando result = null;
-		if (descritorComando instanceof DescritorCadeia) {
-			if (descritorComando.getClasse().isPresent()) {
+		if (comandoDescritor instanceof CadeiaDescritor) {
+			if (comandoDescritor.getClasse().isPresent()) {
 				// instanciar diretamente pela classe informada
-				result = this.instanciar(descritorComando.getClasse().get());
-			} else if (((DescritorCadeia) descritorComando).getTipo().isPresent()) {
+				result = this.instanciar(comandoDescritor.getClasse().get());
+			} else if (((CadeiaDescritor) comandoDescritor).getTipo().isPresent()) {
 				// instanciar pela tipo de cadeia informado
-				switch (((DescritorCadeia) descritorComando).getTipo().get()) {
+				switch (((CadeiaDescritor) comandoDescritor).getTipo().get()) {
 				case SEQUENCIAL:
 					result = CadeiaSequencial.class.newInstance();
 					break;
@@ -133,16 +133,16 @@ public class Biblioteca implements Comandos, Catalogos {
 				}
 			} else {
 				// instanciar pelos comandos genéricos da biblioteca
-				result = this.instanciar(this.getComando(descritorComando.getNome()).get().getClasse().get());
-				if (CadeiaAcao.SUBSTITUIR.equals(((DescritorCadeia) descritorComando).getAcao().orElse(null))) {
+				result = this.instanciar(this.getComando(comandoDescritor.getNome()).get().getClasse().get());
+				if (CadeiaAcao.SUBSTITUIR.equals(((CadeiaDescritor) comandoDescritor).getAcao().orElse(null))) {
 					((Cadeia) result).setComandos(new ArrayList<>());
 				}
 			}
 
 			// instanciar os comandos vinculados
-			for (final DescritorComando c : ((DescritorCadeia) descritorComando).getComandos()) {
+			for (final ComandoDescritor c : ((CadeiaDescritor) comandoDescritor).getComandos()) {
 				final Comando comando = this.instanciar(c.getNome(),
-						((DescritorCadeia) descritorComando).getComandos());
+						((CadeiaDescritor) comandoDescritor).getComandos());
 				comando.ordem = c.getOrdem().orElse(null);
 				((Cadeia) result).adicionarComando(comando);
 			}
@@ -168,10 +168,10 @@ public class Biblioteca implements Comandos, Catalogos {
 			((Cadeia) result).setComandos(listaOrdenada);
 		} else {
 			// instanciar comandos
-			if (!descritorComando.getClasse().isPresent()) {
-				descritorComando.setClasse(this.getComando(descritorComando.getNome()).get().getClasse().get());
+			if (!comandoDescritor.getClasse().isPresent()) {
+				comandoDescritor.setClasse(this.getComando(comandoDescritor.getNome()).get().getClasse().get());
 			}
-			result = this.instanciar(descritorComando.getClasse().get());
+			result = this.instanciar(comandoDescritor.getClasse().get());
 		}
 
 		// atribuir o nome da cadeia
@@ -205,27 +205,27 @@ public class Biblioteca implements Comandos, Catalogos {
 
 	void mergeComandos(final Comandos base, final Comandos modelo) {
 		boolean mesclar = true;
-		if (base instanceof DescritorCadeia) {
-			mesclar = CadeiaAcao.MESCLAR.equals(((DescritorCadeia) base).getAcao().orElse(CadeiaAcao.MESCLAR));
+		if (base instanceof CadeiaDescritor) {
+			mesclar = CadeiaAcao.MESCLAR.equals(((CadeiaDescritor) base).getAcao().orElse(CadeiaAcao.MESCLAR));
 		}
 		
 		// analisar necessidade de mesclar comandos
 		if (mesclar) {
-			for (final DescritorComando modeloDc : modelo.getComandos()) {
+			for (final ComandoDescritor modeloCd : modelo.getComandos()) {
 				boolean encontrou = false;
-				for (final DescritorComando baseDc : base.getComandos()) {
+				for (final ComandoDescritor baseCd : base.getComandos()) {
 					// verificar se a base já tem o comando
-					if (baseDc.getNome().equals(modeloDc.getNome())) {
+					if (baseCd.getNome().equals(modeloCd.getNome())) {
 						// se for cadeia, fazer o merge dos comandos da cadeia
-						if (baseDc instanceof DescritorCadeia) {
-							this.mergeComandos(((DescritorCadeia) baseDc), ((DescritorCadeia) modeloDc));
+						if (baseCd instanceof CadeiaDescritor) {
+							this.mergeComandos(((CadeiaDescritor) baseCd), ((CadeiaDescritor) modeloCd));
 						}
 						encontrou = true;
 						break;
 					}
 				}
 				if (!encontrou) {
-					base.adicionarComando(modeloDc);
+					base.adicionarComando(modeloCd);
 				}
 			}		
 		}

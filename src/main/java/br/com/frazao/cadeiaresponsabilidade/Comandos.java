@@ -6,27 +6,27 @@ import java.util.Optional;
 
 public interface Comandos {
 
-	default void adicionarComando(final Collection<DescritorComando> comandos) {
+	default void adicionarComando(final Collection<ComandoDescritor> comandos) {
 		comandos.forEach((c) -> this.adicionarComando(c));
 	}
 
-	void adicionarComando(final DescritorComando comando);
+	void adicionarComando(final ComandoDescritor comando);
 
-	default void adicionarComando(final DescritorComando... comandos) {
+	default void adicionarComando(final ComandoDescritor... comandos) {
 		this.adicionarComando(Arrays.asList(comandos));
 	}
 
-	default Optional<DescritorComando> getComando(final String nomeComando) {
+	default Optional<ComandoDescritor> getComando(final String nomeComando) {
 		return this.getComandos().stream().filter(c -> c.getNome().equals(nomeComando)).findFirst();
 	}
 
-	default Optional<DescritorComando> getComando(final String nomeComando,
-			final Collection<DescritorComando> comandos) {
-		final Optional<DescritorComando> result = comandos.stream().filter(c -> c.getNome().contentEquals(nomeComando))
+	default Optional<ComandoDescritor> getComando(final String nomeComando,
+			final Collection<ComandoDescritor> comandos) {
+		final Optional<ComandoDescritor> result = comandos.stream().filter(c -> c.getNome().contentEquals(nomeComando))
 				.findFirst();
 		return result;
 	}
 
-	Collection<DescritorComando> getComandos();
+	Collection<ComandoDescritor> getComandos();
 
 }

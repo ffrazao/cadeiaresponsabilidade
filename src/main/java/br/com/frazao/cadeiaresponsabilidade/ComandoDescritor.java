@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DescritorComando {
+class ComandoDescritor {
 
 	@XmlAttribute
 	private Class<? extends Comando> classe;
@@ -28,10 +28,10 @@ public class DescritorComando {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof DescritorComando)) {
+		if (!(obj instanceof ComandoDescritor)) {
 			return false;
 		}
-		final DescritorComando other = (DescritorComando) obj;
+		final ComandoDescritor other = (ComandoDescritor) obj;
 		return Objects.equals(this.nome, other.nome);
 	}
 

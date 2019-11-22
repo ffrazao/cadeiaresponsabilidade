@@ -23,15 +23,15 @@ public class Catalogo implements Comandos {
 
 	@XmlAttribute(name = "antes")
 	@XmlIDREF
-	private DescritorComando antes;
+	private ComandoDescritor antes;
 
-	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
-			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
-	private final Set<DescritorComando> comandos = new HashSet<>();
+	@XmlElements({ @XmlElement(name = "comando", type = ComandoDescritor.class),
+			@XmlElement(name = "cadeia", type = CadeiaDescritor.class) })
+	private final Set<ComandoDescritor> comandos = new HashSet<>();
 
 	@XmlAttribute(name = "depois")
 	@XmlIDREF
-	private DescritorComando depois;
+	private ComandoDescritor depois;
 
 	@XmlAttribute(name = "modelo")
 	@XmlIDREF
@@ -51,22 +51,22 @@ public class Catalogo implements Comandos {
 		this.nome = nome;
 	}
 
-	public Catalogo(final String nome, final Collection<DescritorComando> comandos) {
+	public Catalogo(final String nome, final Collection<ComandoDescritor> comandos) {
 		this(nome);
 		this.adicionarComando(comandos);
 	}
 
-	public Catalogo(final String nome, final DescritorComando... comandos) {
+	public Catalogo(final String nome, final ComandoDescritor... comandos) {
 		this(nome, Arrays.asList(comandos));
 	}
 
-	public Catalogo(final String nome, final DescritorComando comando) {
+	public Catalogo(final String nome, final ComandoDescritor comando) {
 		this(nome);
 		this.adicionarComando(comando);
 	}
 
 	@Override
-	public void adicionarComando(final DescritorComando comando) {
+	public void adicionarComando(final ComandoDescritor comando) {
 		this.comandos.add(comando);
 	}
 
@@ -82,16 +82,16 @@ public class Catalogo implements Comandos {
 		return Objects.equals(this.nome, other.nome);
 	}
 
-	public Optional<DescritorComando> getAntes() {
+	public Optional<ComandoDescritor> getAntes() {
 		return Optional.ofNullable(this.antes);
 	}
 
 	@Override
-	public Set<DescritorComando> getComandos() {
+	public Set<ComandoDescritor> getComandos() {
 		return Collections.unmodifiableSet(this.comandos);
 	}
 
-	public Optional<DescritorComando> getDepois() {
+	public Optional<ComandoDescritor> getDepois() {
 		return Optional.ofNullable(this.depois);
 	}
 
@@ -103,11 +103,11 @@ public class Catalogo implements Comandos {
 		return this.nome;
 	}
 
-	public void setAntes(final DescritorComando antes) {
+	public void setAntes(final ComandoDescritor antes) {
 		this.antes = antes;
 	}
 
-	public void setDepois(final DescritorComando depois) {
+	public void setDepois(final ComandoDescritor depois) {
 		this.depois = depois;
 	}
 
