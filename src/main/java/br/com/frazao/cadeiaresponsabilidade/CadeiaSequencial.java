@@ -5,7 +5,7 @@ import java.util.logging.Level;
 
 public class CadeiaSequencial extends Cadeia {
 
-	public CadeiaSequencial() {
+	CadeiaSequencial() {
 		super();
 	}
 

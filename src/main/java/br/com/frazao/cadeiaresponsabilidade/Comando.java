@@ -20,7 +20,7 @@ public abstract class Comando {
 	private Logger log = null;
 
 	private String nome = null;
-	
+
 	Integer ordem;
 
 	public Comando() {

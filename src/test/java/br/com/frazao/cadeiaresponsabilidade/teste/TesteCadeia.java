@@ -40,9 +40,9 @@ public class TesteCadeia {
 			return;
 		}
 
-		final Comando c1 = new C1();
-		final Comando c2 = new C2();
-		final Comando c3 = new C3();
+		final Comando c1 = new C1("1");
+		final Comando c2 = new C2("3");
+		final Comando c3 = new C3("4");
 		final Comando ch1 = new Ch1(c1, c2, c3);
 		final Comando ch2 = new Ch2();
 		final Comando ch3 = new CadeiaParalela(ch1, ch2, c3);

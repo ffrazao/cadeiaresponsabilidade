@@ -12,7 +12,7 @@ abstract class Cadeia extends Comando {
 
 	private boolean congelado = false;
 
-	public Cadeia() {
+	Cadeia() {
 	}
 
 	public Cadeia(final Comando... comandos) {

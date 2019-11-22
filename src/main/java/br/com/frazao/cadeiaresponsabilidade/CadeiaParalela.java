@@ -9,7 +9,7 @@ import java.util.logging.Level;
 
 public class CadeiaParalela extends Cadeia {
 
-	public CadeiaParalela() {
+	CadeiaParalela() {
 		super();
 	}
 

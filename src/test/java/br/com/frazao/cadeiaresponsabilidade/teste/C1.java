@@ -7,6 +7,11 @@ import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class C1 extends Comando {
 
+	public C1(String nome) {
+		super(nome);
+		// TODO Auto-generated constructor stub
+	}
+
 	private Integer cont = 0;
 	private final Integer total = 2;
 

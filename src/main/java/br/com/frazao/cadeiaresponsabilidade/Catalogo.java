@@ -41,7 +41,7 @@ public class Catalogo implements Comandos {
 	@XmlID
 	private String nome;
 
-	public Catalogo() {
+	Catalogo() {
 	}
 
 	public Catalogo(final String nome) {
@@ -115,7 +115,7 @@ public class Catalogo implements Comandos {
 		this.modelo = modelo;
 	}
 
-	public void setNome(final String nome) {
+	void setNome(final String nome) {
 		this.nome = nome;
 	}
 

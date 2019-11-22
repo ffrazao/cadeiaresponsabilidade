@@ -16,6 +16,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DescritorCadeia extends DescritorComando implements Comandos {
 
+	@XmlAttribute(name = "acao")
+	private CadeiaAcao acao = CadeiaAcao.MESCLAR;
+
 	@XmlElements({ @XmlElement(name = "comando", type = DescritorComando.class),
 			@XmlElement(name = "cadeia", type = DescritorCadeia.class) })
 	private List<DescritorComando> comandos = new ArrayList<>();
@@ -28,6 +31,10 @@ public class DescritorCadeia extends DescritorComando implements Comandos {
 		this.comandos.add(comando);
 	}
 
+	public Optional<CadeiaAcao> getAcao() {
+		return Optional.ofNullable(this.acao);
+	}
+
 	@Override
 	public List<DescritorComando> getComandos() {
 		return Collections.unmodifiableList(this.comandos);
@@ -35,6 +42,10 @@ public class DescritorCadeia extends DescritorComando implements Comandos {
 
 	public Optional<CadeiaTipo> getTipo() {
 		return Optional.ofNullable(this.tipo);
+	}
+
+	void setAcao(final CadeiaAcao acao) {
+		this.acao = acao;
 	}
 
 	public void setComandos(final List<DescritorComando> comados) {
