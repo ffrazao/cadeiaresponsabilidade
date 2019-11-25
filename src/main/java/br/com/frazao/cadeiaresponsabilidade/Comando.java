@@ -52,7 +52,7 @@ public abstract class Comando {
 	}
 
 	private String descreverTempo(long milessegundos) {
-		if (milessegundos <= 0) {
+		if (milessegundos < 0) {
 			return "";
 		}
 
