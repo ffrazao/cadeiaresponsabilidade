@@ -14,7 +14,7 @@ public class C2 extends Comando {
 	}
 
 	@Override
-	protected <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
+	protected  void procedimento(final Contexto contexto) throws Exception {
 	}
 
 }

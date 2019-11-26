@@ -26,7 +26,7 @@ public class TesteCadeia {
 	public void test() throws Exception {
 		SpringApplication.run(TesteCadeia.class, new String[0]);
 		
-		final Contexto<String, Object> contexto = new ContextoBase<>();
+		final Contexto contexto = new ContextoBase();
 		
 		minhaBiblioteca.carregar(TesteCadeia.class.getPackage());
 		

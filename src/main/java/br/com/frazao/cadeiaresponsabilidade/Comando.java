@@ -38,14 +38,14 @@ public abstract class Comando {
 		}
 	}
 
-	protected <k, v> boolean antesProcedimento(final Contexto<k, v> contexto) {
+	protected <k, v> boolean antesProcedimento(final Contexto contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%s) antes de executar", this.getNome()));
 		}
 		return Comando.CONTINUAR;
 	}
 
-	protected <k, v> void depoisProcedimento(final Contexto<k, v> contexto) {
+	protected <k, v> void depoisProcedimento(final Contexto contexto) {
 		if (this.log().isLoggable(Level.FINER)) {
 			this.log().finer(String.format("(%s) depois de executar", this.getNome()));
 		}
@@ -80,14 +80,14 @@ public abstract class Comando {
 		return Objects.equals(this.getNome(), other.getNome());
 	}
 
-	protected <k, v> boolean erroAoExecutar(final Contexto<k, v> contexto, final Exception e) throws Exception {
+	protected <k, v> boolean erroAoExecutar(final Contexto contexto, final Exception e) throws Exception {
 		if (this.log().isLoggable(Level.SEVERE)) {
 			this.log().severe(String.format("(%s) erro ao executar, [%s]", this.getNome(), e));
 		}
 		return Comando.PARAR;
 	}
 
-	public <k, v> void executar(final Contexto<k, v> contexto) throws Exception {
+	public <k, v> void executar(final Contexto contexto) throws Exception {
 		try {
 			if (this.inicio == null) {
 				this.inicio = Instant.now();
@@ -144,13 +144,13 @@ public abstract class Comando {
 		return this.log;
 	}
 
-	protected abstract <k, v> void procedimento(Contexto<k, v> contexto) throws Exception;
+	protected abstract <k, v> void procedimento(Contexto contexto) throws Exception;
 
 	void setNome(final String nome) {
 		this.nome = nome;
 	}
 
-	protected <k, v> boolean vaiRepetir(final Contexto<k, v> contexto) {
+	protected <k, v> boolean vaiRepetir(final Contexto contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%s) vai repetir?", this.getNome()));
 		}

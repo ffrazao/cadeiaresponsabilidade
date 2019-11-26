@@ -46,7 +46,7 @@ abstract class Cadeia extends Comando {
 	}
 
 	@Override
-	public final <k, v> void executar(final Contexto<k, v> contexto) throws Exception {
+	public final <k, v> void executar(final Contexto contexto) throws Exception {
 		if ((this.comandos == null) || this.comandos.isEmpty()) {
 			throw new IllegalStateException("Cadeia sem comando(s)");
 		}

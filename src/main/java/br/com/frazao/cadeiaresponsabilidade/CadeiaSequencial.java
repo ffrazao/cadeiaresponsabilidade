@@ -18,7 +18,7 @@ public class CadeiaSequencial extends Cadeia {
 	}
 
 	@Override
-	protected final <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
+	protected final <k, v> void procedimento(final Contexto contexto) throws Exception {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%s) cadeia sequenciada procedimento", this.getNome()));
 		}

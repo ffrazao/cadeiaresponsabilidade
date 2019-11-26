@@ -7,26 +7,26 @@ import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class C1 extends Comando {
 
-	public C1(String nome) {
+	private Integer cont = 0;
+
+	private final Integer total = 2;
+
+	public C1(final String nome) {
 		super(nome);
 		// TODO Auto-generated constructor stub
 	}
 
-	private Integer cont = 0;
-	private final Integer total = 2;
-
-	@SuppressWarnings("unchecked")
 	@Override
-	protected <k, v> void procedimento(final Contexto<k, v> contexto) throws Exception {
+	protected void procedimento(final Contexto contexto) throws Exception {
 		final Integer cont = (Integer) contexto.get("cont");
 		if (cont == null) {
-			contexto.put((k) "cont", (v) this.cont);
+			contexto.put("cont", this.cont);
 		}
 		System.out.printf("Executando C1 %d/%d\n", cont + 1, this.total);
 	}
 
 	@Override
-	protected <k, v> boolean vaiRepetir(final Contexto<k, v> contexto) {
+	protected boolean vaiRepetir(final Contexto contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config("repetindo...");
 		}
