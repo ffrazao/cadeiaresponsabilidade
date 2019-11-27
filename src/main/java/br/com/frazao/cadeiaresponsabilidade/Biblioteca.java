@@ -215,7 +215,7 @@ public class Biblioteca implements Comandos, Catalogos {
 				boolean encontrou = false;
 				for (final ComandoDescritor baseCd : base.getComandos()) {
 					// verificar se a base já tem o comando
-					if (baseCd.getNome().equals(modeloCd.getNome())) {
+					if (baseCd.getNome().equalsIgnoreCase(modeloCd.getNome())) {
 						// se for cadeia, fazer o merge dos comandos da cadeia
 						if (baseCd instanceof CadeiaDescritor) {
 							this.mergeComandos(((CadeiaDescritor) baseCd), ((CadeiaDescritor) modeloCd));

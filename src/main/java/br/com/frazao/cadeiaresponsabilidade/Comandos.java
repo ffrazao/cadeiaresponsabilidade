@@ -17,12 +17,12 @@ public interface Comandos {
 	}
 
 	default Optional<ComandoDescritor> getComando(final String nomeComando) {
-		return this.getComandos().stream().filter(c -> c.getNome().equals(nomeComando)).findFirst();
+		return this.getComandos().stream().filter(c -> c.getNome().equalsIgnoreCase(nomeComando)).findFirst();
 	}
 
 	default Optional<ComandoDescritor> getComando(final String nomeComando,
 			final Collection<ComandoDescritor> comandos) {
-		final Optional<ComandoDescritor> result = comandos.stream().filter(c -> c.getNome().contentEquals(nomeComando))
+		final Optional<ComandoDescritor> result = comandos.stream().filter(c -> c.getNome().equalsIgnoreCase(nomeComando))
 				.findFirst();
 		return result;
 	}

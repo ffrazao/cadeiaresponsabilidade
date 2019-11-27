@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -79,7 +78,7 @@ public class Catalogo implements Comandos {
 			return false;
 		}
 		final Catalogo other = (Catalogo) obj;
-		return Objects.equals(this.nome, other.nome);
+		return this.nome.equalsIgnoreCase(other.nome);
 	}
 
 	public Optional<ComandoDescritor> getAntes() {

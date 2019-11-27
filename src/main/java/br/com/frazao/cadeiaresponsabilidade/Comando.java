@@ -77,7 +77,7 @@ public abstract class Comando {
 			return false;
 		}
 		final Comando other = (Comando) obj;
-		return Objects.equals(this.getNome(), other.getNome());
+		return this.getNome().equalsIgnoreCase(other.getNome());
 	}
 
 	protected <k, v> boolean erroAoExecutar(final Contexto contexto, final Exception e) throws Exception {

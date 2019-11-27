@@ -18,7 +18,7 @@ public interface Catalogos {
 
 	default Optional<Catalogo> getCatalogo(final String nomeCatalogo) {
 		final Optional<Catalogo> result = this.getCatalogos().stream()
-				.filter(c -> c.getNome().contentEquals(nomeCatalogo)).findFirst();
+				.filter(c -> c.getNome().equalsIgnoreCase(nomeCatalogo)).findFirst();
 		return result;
 	}
 

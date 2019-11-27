@@ -32,7 +32,7 @@ class ComandoDescritor {
 			return false;
 		}
 		final ComandoDescritor other = (ComandoDescritor) obj;
-		return Objects.equals(this.nome, other.nome);
+		return this.nome.equalsIgnoreCase(other.nome);
 	}
 
 	public Optional<Class<? extends Comando>> getClasse() {
