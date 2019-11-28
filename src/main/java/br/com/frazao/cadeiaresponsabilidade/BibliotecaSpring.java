@@ -32,5 +32,9 @@ public class BibliotecaSpring extends Biblioteca implements BeanFactoryAware {
 	public void setBeanFactory(final BeanFactory beanFactory) throws BeansException {
 		this.beanFactory = beanFactory;
 	}
+	
+	public <E> E instanciarBean(Class<E> c) {
+		return this.beanFactory.getBean(c);
+	}
 
 }
