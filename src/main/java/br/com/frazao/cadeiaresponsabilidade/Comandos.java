@@ -22,8 +22,8 @@ public interface Comandos {
 
 	default Optional<ComandoDescritor> getComando(final String nomeComando,
 			final Collection<ComandoDescritor> comandos) {
-		final Optional<ComandoDescritor> result = comandos.stream().filter(c -> c.getNome().equalsIgnoreCase(nomeComando))
-				.findFirst();
+		final Optional<ComandoDescritor> result = comandos.stream()
+				.filter(c -> c.getNome().equalsIgnoreCase(nomeComando)).findFirst();
 		return result;
 	}
 

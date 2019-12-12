@@ -8,13 +8,13 @@ import br.com.frazao.cadeiaresponsabilidade.Contexto;
 @Component
 public class C2 extends Comando {
 
-	public C2(String nome) {
+	public C2(final String nome) {
 		super(nome);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected  void procedimento(final Contexto contexto) throws Exception {
+	protected void procedimento(final Contexto contexto) throws Exception {
 	}
 
 }
