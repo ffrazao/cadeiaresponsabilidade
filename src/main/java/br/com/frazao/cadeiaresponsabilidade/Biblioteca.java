@@ -112,8 +112,7 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	// instanciador de comando
-	Comando instanciar(final String nomeComando, final Collection<ComandoDescritor> comandos)
-			throws Exception {
+	Comando instanciar(final String nomeComando, final Collection<ComandoDescritor> comandos) throws Exception {
 		final ComandoDescritor comandoDescritor = this.getComando(nomeComando, comandos).get();
 
 		Comando result = null;
@@ -208,7 +207,7 @@ public class Biblioteca implements Comandos, Catalogos {
 		if (base instanceof CadeiaDescritor) {
 			mesclar = CadeiaAcao.MESCLAR.equals(((CadeiaDescritor) base).getAcao().orElse(CadeiaAcao.MESCLAR));
 		}
-		
+
 		// analisar necessidade de mesclar comandos
 		if (mesclar) {
 			for (final ComandoDescritor modeloCd : modelo.getComandos()) {
@@ -227,7 +226,7 @@ public class Biblioteca implements Comandos, Catalogos {
 				if (!encontrou) {
 					base.adicionarComando(modeloCd);
 				}
-			}		
+			}
 		}
 	}
 

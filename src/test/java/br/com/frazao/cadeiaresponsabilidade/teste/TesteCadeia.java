@@ -6,40 +6,36 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import br.com.frazao.cadeiaresponsabilidade.BibliotecaSpring;
-import br.com.frazao.cadeiaresponsabilidade.CadeiaParalela;
-import br.com.frazao.cadeiaresponsabilidade.CadeiaSequencial;
 import br.com.frazao.cadeiaresponsabilidade.Comando;
 import br.com.frazao.cadeiaresponsabilidade.Contexto;
 import br.com.frazao.cadeiaresponsabilidade.ContextoBase;
 
-@ComponentScan(basePackages = {"br.com.frazao.cadeiaresponsabilidade", "br.com.frazao.cadeiaresponsabilidade.teste"})
+@ComponentScan(basePackages = { "br.com.frazao.cadeiaresponsabilidade", "br.com.frazao.cadeiaresponsabilidade.teste" })
 public class TesteCadeia {
-	
-	@Autowired
-	private BibliotecaSpring minhaBiblioteca;
-	
-	public static void main(String[] args) throws Exception {
+
+	public static void main(final String[] args) throws Exception {
 		new TesteCadeia().test();
 	}
-	
+
+	@Autowired
+	private BibliotecaSpring minhaBiblioteca;
+
 	@Test
 	public void test() throws Exception {
 		SpringApplication.run(TesteCadeia.class, new String[0]);
-		
+
 		final Contexto contexto = new ContextoBase();
-		
-		minhaBiblioteca.carregar(TesteCadeia.class.getPackage());
-		
-		final Comando t1 = minhaBiblioteca.instanciar("DIA");
+
+		this.minhaBiblioteca.carregar(TesteCadeia.class.getPackage());
+
+		final Comando t1 = this.minhaBiblioteca.instanciar("DIA");
 		contexto.put("a", "a");
 		t1.executar(contexto);
 
 		System.out.println(contexto);
+//// @formatter:off
 
-		if (1 == 1) {
-			return;
-		}
-
+/*
 		final Comando c1 = new C1("1");
 		final Comando c2 = new C2("3");
 		final Comando c3 = new C3("4");
@@ -91,6 +87,8 @@ public class TesteCadeia {
 			System.out.println(ch4.getDuracao());
 		} catch (final Exception e) {
 		}
+*/
+// @formatter:on
 
 	}
 
