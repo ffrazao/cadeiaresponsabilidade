@@ -25,7 +25,7 @@ public class BibliotecaSpring extends Biblioteca implements BeanFactoryAware {
 
 	@Override
 	protected Comando instanciar(final Class<? extends Comando> classe) throws Exception {
-		return this.beanFactory.getBean(classe);
+		return this.instanciarBean(classe);
 	}
 
 	@Override
