@@ -1,24 +1,26 @@
 package br.com.frazao.cadeiaresponsabilidade.teste;
 
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import br.com.frazao.cadeiaresponsabilidade.BibliotecaSpring;
+import br.com.frazao.cadeiaresponsabilidade.Biblioteca;
 import br.com.frazao.cadeiaresponsabilidade.Comando;
 import br.com.frazao.cadeiaresponsabilidade.Contexto;
 import br.com.frazao.cadeiaresponsabilidade.ContextoBase;
 
 @ComponentScan(basePackages = { "br.com.frazao.cadeiaresponsabilidade", "br.com.frazao.cadeiaresponsabilidade.teste" })
 public class TesteCadeia {
-
+	
+	public TesteCadeia() {
+		minhaBiblioteca = new Biblioteca();
+	}
+	
 	public static void main(final String[] args) throws Exception {
 		new TesteCadeia().test();
 	}
 
-	@Autowired
-	private BibliotecaSpring minhaBiblioteca;
+	private Biblioteca minhaBiblioteca;
 
 	@Test
 	public void test() throws Exception {
@@ -26,11 +28,15 @@ public class TesteCadeia {
 
 		final Contexto contexto = new ContextoBase();
 
-		this.minhaBiblioteca.carregar(TesteCadeia.class.getPackage());
+		this.minhaBiblioteca.carregar(TesteCadeia.class);
 
-		final Comando t1 = this.minhaBiblioteca.instanciar("DIA");
+//		final Comando t1 = this.minhaBiblioteca.instanciar("DIA");
+//		contexto.put("a", "a");
+//		t1.executar(contexto);
+
+		final Comando t2 = this.minhaBiblioteca.instanciar("usuario", "nuvem");
 		contexto.put("a", "a");
-		t1.executar(contexto);
+		t2.executar(contexto);
 
 		System.out.println(contexto);
 //// @formatter:off

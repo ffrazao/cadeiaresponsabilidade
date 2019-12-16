@@ -9,7 +9,7 @@ public class Ch2 extends CadeiaSequencial {
 
 	public Ch2() {
 		super(new C1("1"), new C2("2"), new C3("3"));
-		this.getComandos().add(2, new C1("22"));
+		this.adicionarComando(1, new C1("22"));
 	}
 
 }

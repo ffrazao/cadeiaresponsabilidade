@@ -11,6 +11,10 @@ public class C1 extends Comando {
 
 	private final Integer total = 2;
 
+	public C1() {
+		
+	}
+
 	public C1(final String nome) {
 		super(nome);
 		// TODO Auto-generated constructor stub
@@ -18,9 +22,10 @@ public class C1 extends Comando {
 
 	@Override
 	protected void procedimento(final Contexto contexto) throws Exception {
-		final Integer cont = (Integer) contexto.get("cont");
+		Integer cont = (Integer) contexto.get("cont");
 		if (cont == null) {
 			contexto.put("cont", this.cont);
+			cont = this.cont;
 		}
 		System.out.printf("Executando C1 %d/%d\n", cont + 1, this.total);
 	}

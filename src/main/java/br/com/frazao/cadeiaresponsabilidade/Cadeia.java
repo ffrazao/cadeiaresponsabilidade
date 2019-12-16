@@ -29,6 +29,10 @@ abstract class Cadeia extends Comando {
 	}
 
 	public final void adicionarComando(final Comando comando) {
+		this.comandos.add(this.comandos.size(), comando);
+	}
+
+	public final void adicionarComando(final Integer posicao, final Comando comando) {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%) adicionando comando", this.getNome()));
 		}
@@ -38,7 +42,7 @@ abstract class Cadeia extends Comando {
 		if (this.congelado) {
 			throw new IllegalStateException("Neste momento não é possível adicionar nenhum comando à cadeia");
 		}
-		this.comandos.add(comando);
+		this.comandos.add(posicao, comando);
 	}
 
 	public final void adicionarComando(final List<Comando> comandos) {

@@ -65,7 +65,11 @@ public class Biblioteca implements Comandos, Catalogos {
 		final Unmarshaller unmarshaller = context.createUnmarshaller();
 		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
 		// verificar se há comandos sem a classe definida
-		if (biblioteca.getComandos().stream().filter(c -> !c.getClasse().isPresent()).count() > 0) {
+		if (biblioteca.getComandos().stream()
+				.filter(c -> (c instanceof CadeiaDescritor && !c.getClasse().isPresent()
+						&& !((CadeiaDescritor) c).getTipo().isPresent())
+						|| (!(c instanceof CadeiaDescritor) && !c.getClasse().isPresent()))
+				.count() > 0) {
 			throw new IllegalArgumentException("Comandos genéricos sem classe definida não são permitidos");
 		}
 		this.adicionarComando(biblioteca.getComandos());
@@ -132,9 +136,34 @@ public class Biblioteca implements Comandos, Catalogos {
 				}
 			} else {
 				// instanciar pelos comandos genéricos da biblioteca
-				result = this.instanciar(this.getComando(comandoDescritor.getNome()).get().getClasse().get());
-				if (CadeiaAcao.SUBSTITUIR.equals(((CadeiaDescritor) comandoDescritor).getAcao().orElse(null))) {
-					((Cadeia) result).setComandos(new ArrayList<>());
+				Optional<ComandoDescritor> comandoGenerico = this.getComando(comandoDescritor.getNome());
+				if (comandoGenerico.isPresent()) {
+					if (comandoGenerico.get().getClasse().isPresent()) {
+						// instanciar diretamente pela classe informada
+						result = this.instanciar(comandoGenerico.get().getClasse().get());
+					} else if (((CadeiaDescritor) comandoGenerico.get()).getTipo().isPresent()) {
+						// instanciar pela tipo de cadeia informado
+						switch (((CadeiaDescritor) comandoGenerico.get()).getTipo().get()) {
+						case SEQUENCIAL:
+							result = CadeiaSequencial.class.newInstance();
+							break;
+						case PARALELO:
+							result = CadeiaParalela.class.newInstance();
+							break;
+						}
+					} else {
+						throw new IllegalArgumentException(String
+								.format("Comando genérico (%s) existe porém é indefinido", comandoDescritor.getNome()));
+					}
+					if (CadeiaAcao.SUBSTITUIR.equals(((CadeiaDescritor) comandoDescritor).getAcao().orElse(null))) {
+						((Cadeia) result).setComandos(new ArrayList<>());
+					} else {
+						((CadeiaDescritor) comandoDescritor)
+								.setComandos(((CadeiaDescritor) comandoGenerico.get()).getComandos());
+					}
+				} else {
+					throw new IllegalArgumentException(
+							String.format("Comando genérico (%s) não encontrado", comandoDescritor.getNome()));
 				}
 			}
 
