@@ -1,19 +1,24 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public final class ContextoBase extends HashMap<String, Object> implements Contexto {
 
-	public static final String CAMPO_CATALOGO = "catalogo";
+	public static final String CAMPO_CATALOGO = "Catalogo";
 
-	public static final String CAMPO_COMANDO = "comando";
+	public static final String CAMPO_COMANDO = "Comando";
 
-	public static final String CAMPO_REQUISICAO = "requisicao";
+	public static final String CAMPO_REQUISICAO = "Requisicao";
 
-	public static final String CAMPO_RESPOSTA = "resposta";
+	public static final String CAMPO_RESPOSTA = "Resposta";
 
-	public static final String CAMPO_USUARIO = "usuario";
+	public static final String CAMPO_RESPOSTA_HISTORICO = "Resposta_historico";
+
+	public static final String CAMPO_USUARIO = "Usuario";
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,9 +26,9 @@ public final class ContextoBase extends HashMap<String, Object> implements Conte
 		this(null);
 	}
 
-	public ContextoBase(final Object requisicao) {
+	public ContextoBase(final Object valor) {
 		super();
-		this.setRequisicao(requisicao);
+		this.setRequisicao(valor);
 	}
 
 	@Override
@@ -46,37 +51,62 @@ public final class ContextoBase extends HashMap<String, Object> implements Conte
 		return this.get(ContextoBase.CAMPO_RESPOSTA);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object getResposta(Integer valor) {
+		List<Object> respostaHistorico = (List<Object>) this.get(CAMPO_RESPOSTA_HISTORICO);
+		return respostaHistorico.get(valor);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Integer getRespostaTamanhoHistorico() {
+		Optional<List<Object>> respostaHistoricoOpt = Optional.ofNullable((List<Object>) this.get(CAMPO_RESPOSTA_HISTORICO));
+		Integer result = respostaHistoricoOpt.map(r -> r.size()).orElse(null);
+		return result;
+	}
+
 	@Override
 	public Principal getUsuario() {
 		return (Principal) this.get(ContextoBase.CAMPO_USUARIO);
 	}
 
 	@Override
-	public void setCatalogo(final String catalogo) {
-		this.put(ContextoBase.CAMPO_CATALOGO, catalogo);
+	public void setCatalogo(final String valor) {
+		this.put(ContextoBase.CAMPO_CATALOGO, valor);
 	}
 
 	@Override
-	public void setComando(final String comando) {
-		this.put(ContextoBase.CAMPO_COMANDO, comando);
+	public void setComando(final String valor) {
+		this.put(ContextoBase.CAMPO_COMANDO, valor);
 	}
 
 	@Override
-	public void setRequisicao(final Object requisicao) {
+	public void setRequisicao(final Object valor) {
 		if (this.getRequisicao() != null) {
-			throw new IllegalStateException("A requisiÃ§Ã£o nÃ£o pode ser redefinida!");
+			throw new IllegalArgumentException("A requisição não pode ser redefinida!");
 		}
-		this.put(ContextoBase.CAMPO_REQUISICAO, requisicao);
+		this.put(ContextoBase.CAMPO_REQUISICAO, valor);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void setResposta(final Object valor) {
+		List<Object> respostaHistorico = (List<Object>) this.get(ContextoBase.CAMPO_RESPOSTA_HISTORICO);
+		if (respostaHistorico == null) {
+			respostaHistorico = new ArrayList<Object>();
+			this.put(ContextoBase.CAMPO_RESPOSTA_HISTORICO, respostaHistorico);
+		}
+		respostaHistorico.add(valor);
+		this.put(ContextoBase.CAMPO_RESPOSTA, valor);
 	}
 
 	@Override
-	public void setResposta(final Object resposta) {
-		this.put(ContextoBase.CAMPO_RESPOSTA, resposta);
-	}
-
-	@Override
-	public void setUsuario(final Principal usuario) {
-		this.put(ContextoBase.CAMPO_USUARIO, usuario);
+	public void setUsuario(final Principal valor) {
+		if (this.getUsuario() != null) {
+			throw new IllegalArgumentException("A informação do usuário requerente não pode ser redefinido!");
+		}
+		this.put(ContextoBase.CAMPO_USUARIO, valor);
 	}
 
 }

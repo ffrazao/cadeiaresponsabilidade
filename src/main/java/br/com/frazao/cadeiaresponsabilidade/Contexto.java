@@ -13,15 +13,20 @@ public interface Contexto extends Map<String, Object> {
 
 	Object getResposta();
 
+	Object getResposta(Integer valor);
+
+	Integer getRespostaTamanhoHistorico();
+
 	Principal getUsuario();
 
-	void setCatalogo(String catalogo);
+	void setCatalogo(String valor);
 
-	void setComando(String comando);
+	void setComando(String valor);
 
-	void setRequisicao(Object requisicao);
+	void setRequisicao(Object valor);
 
-	void setResposta(Object resposta);
+	void setResposta(Object valor);
 
-	void setUsuario(Principal usuario);
+	void setUsuario(Principal valor);
+
 }
