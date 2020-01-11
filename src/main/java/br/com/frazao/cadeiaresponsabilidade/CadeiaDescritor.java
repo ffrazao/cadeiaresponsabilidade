@@ -26,8 +26,11 @@ class CadeiaDescritor extends ComandoDescritor implements Comandos {
 	@XmlAttribute(name = "tipo")
 	private CadeiaTipo tipo;
 
+	CadeiaDescritor() {
+	}
+
 	@Override
-	public void adicionarComando(final ComandoDescritor comando) {
+	public void adicionar(final ComandoDescritor comando) {
 		this.comandos.add(comando);
 	}
 

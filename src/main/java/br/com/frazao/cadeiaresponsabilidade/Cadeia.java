@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 abstract class Cadeia extends Comando {
 
-	private List<Comando> comandos = new ArrayList<>();
+	private final List<Comando> comandos = new ArrayList<>();
 
 	private boolean congelado = false;
 
@@ -29,18 +29,19 @@ abstract class Cadeia extends Comando {
 	}
 
 	public final void adicionarComando(final Comando comando) {
-		this.comandos.add(this.comandos.size(), comando);
+		this.adicionarComando(this.comandos.size(), comando);
 	}
 
 	public final void adicionarComando(final Integer posicao, final Comando comando) {
 		if (this.log().isLoggable(Level.CONFIG)) {
-			this.log().config(String.format("(%) adicionando comando", this.getNome()));
+			this.log().config(String.format("(%s) adicionando comando (%s)", this, comando));
 		}
 		if (comando == null) {
 			throw new IllegalArgumentException("O comando não pode ser nulo!");
 		}
 		if (this.congelado) {
-			throw new IllegalStateException("Neste momento não é possível adicionar nenhum comando à cadeia");
+			throw new IllegalStateException(
+					String.format("Neste momento não é possível adicionar nenhum comando à cadeia (%s)", this));
 		}
 		this.comandos.add(posicao, comando);
 	}
@@ -67,8 +68,9 @@ abstract class Cadeia extends Comando {
 		return Collections.unmodifiableList(this.comandos);
 	}
 
-	final void setComandos(final List<Comando> comandos) {
-		this.comandos = comandos;
+	@Override
+	public String toString() {
+		return "Cadeia [" + this.getNome() + "]";
 	}
 
 }

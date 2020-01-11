@@ -23,6 +23,9 @@ class ComandoDescritor {
 	@XmlAttribute
 	private Integer ordem;
 
+	ComandoDescritor() {
+	}
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
@@ -58,6 +61,11 @@ class ComandoDescritor {
 
 	public void setOrdem(final Integer ordem) {
 		this.ordem = ordem;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("%s[%s]", this.getClass().getSimpleName(), this.getNome());
 	}
 
 }

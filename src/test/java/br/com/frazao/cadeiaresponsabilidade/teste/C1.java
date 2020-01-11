@@ -17,7 +17,6 @@ public class C1 extends Comando {
 
 	public C1(final String nome) {
 		super(nome);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

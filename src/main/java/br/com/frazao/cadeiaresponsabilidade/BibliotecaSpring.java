@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Configuration
-// @ComponentScan("br.com.frazao.cadeiaresponsabilidade")
 @Component
 public class BibliotecaSpring extends Biblioteca implements BeanFactoryAware {
 

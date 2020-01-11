@@ -34,20 +34,20 @@ public abstract class Comando {
 		this();
 		this.nome = nome;
 		if (this.log().isLoggable(Level.FINER)) {
-			this.log().finer(String.format("(%s) novo comando", this.getNome()));
+			this.log().finer(String.format("(%s) novo comando", this));
 		}
 	}
 
 	protected <k, v> boolean antesProcedimento(final Contexto contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {
-			this.log().config(String.format("(%s) antes de executar", this.getNome()));
+			this.log().config(String.format("(%s) antes de executar", this));
 		}
 		return Comando.CONTINUAR;
 	}
 
 	protected <k, v> void depoisProcedimento(final Contexto contexto) {
 		if (this.log().isLoggable(Level.FINER)) {
-			this.log().finer(String.format("(%s) depois de executar", this.getNome()));
+			this.log().finer(String.format("(%s) depois de executar", this));
 		}
 	}
 
@@ -82,7 +82,7 @@ public abstract class Comando {
 
 	protected <k, v> boolean erroAoExecutar(final Contexto contexto, final Exception e) throws Exception {
 		if (this.log().isLoggable(Level.SEVERE)) {
-			this.log().severe(String.format("(%s) erro ao executar, [%s]", this.getNome(), e));
+			this.log().severe(String.format("(%s) erro ao executar, [%s]", this, e));
 		}
 		return Comando.PARAR;
 	}
@@ -93,7 +93,7 @@ public abstract class Comando {
 				this.inicio = Instant.now();
 			}
 			if (this.log().isLoggable(Level.INFO)) {
-				this.log().info(String.format("(%s) iniciado", this.getNome()));
+				this.log().info(String.format("(%s) iniciado", this));
 			}
 			if (contexto == null) {
 				throw new IllegalArgumentException("Contexto não informado");
@@ -114,7 +114,7 @@ public abstract class Comando {
 		} finally {
 			this.duracao = Duration.between(this.inicio, Instant.now());
 			if (this.log().isLoggable(Level.INFO)) {
-				this.log().info(String.format("(%s) executou em [%s]", this.getNome(),
+				this.log().info(String.format("(%s) executou em [%s]", this,
 						this.descreverTempo(this.getDuracao().toMillis())));
 			}
 		}
@@ -152,9 +152,14 @@ public abstract class Comando {
 
 	protected <k, v> boolean vaiRepetir(final Contexto contexto) {
 		if (this.log().isLoggable(Level.CONFIG)) {
-			this.log().config(String.format("(%s) vai repetir?", this.getNome()));
+			this.log().config(String.format("(%s) vai repetir?", this));
 		}
 		return Comando.PARAR;
+	}
+
+	@Override
+	public String toString() {
+		return "Comando [" + this.getNome() + "]";
 	}
 
 }

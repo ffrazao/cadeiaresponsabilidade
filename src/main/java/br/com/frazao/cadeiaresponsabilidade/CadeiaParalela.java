@@ -24,7 +24,7 @@ public class CadeiaParalela extends Cadeia {
 	@Override
 	protected final <k, v> void procedimento(final Contexto contexto) throws Exception {
 		if (this.log().isLoggable(Level.CONFIG)) {
-			this.log().config(String.format("(%s) cadeia paralela procedimento", this.getNome()));
+			this.log().config(String.format("(%s) cadeia paralela procedimento", this));
 		}
 		final List<Callable<Void>> callableList = new ArrayList<>();
 		this.getComandos().stream().forEach((comando) -> callableList.add(() -> {
@@ -38,6 +38,9 @@ public class CadeiaParalela extends Cadeia {
 		} finally {
 			es.shutdown();
 			es = null;
+		}
+		if (this.log().isLoggable(Level.FINE)) {
+			this.log().fine(String.format("(%s) FIM cadeia paralela procedimento", this));
 		}
 	}
 

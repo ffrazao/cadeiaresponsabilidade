@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,30 +24,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
+import br.com.frazao.cadeiaresponsabilidade.apoio.Util;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Biblioteca implements Comandos, Catalogos {
+public class Biblioteca implements Catalogos {
 
-	public static final String BIBLIOTECA_NOME = "biblioteca.xml";
+	public static final String BIBLIOTECA_ARQUIVO_NOME_PADRAO = "biblioteca.xml";
+
+	public static final String CATALOGO_BASE = "";
 
 	@XmlElement(name = "catalogo")
-	private final Set<Catalogo> catalogos = new HashSet<>();
+	private Collection<Catalogo> catalogos = new ArrayList<>();
 
 	@XmlElements({ @XmlElement(name = "comando", type = ComandoDescritor.class),
 			@XmlElement(name = "cadeia", type = CadeiaDescritor.class) })
-	private final Set<ComandoDescritor> comandos = new HashSet<>();
+	private Collection<ComandoDescritor> comandos = new ArrayList<>();
 
 	public Biblioteca() {
 	}
 
 	@Override
 	public void adicionarCatalogo(final Catalogo catalogo) {
+		if (catalogo == null) {
+			throw new NullPointerException();
+		}
+		if (this.catalogos instanceof List) {
+			if (this.catalogos == null || this.catalogos.size() > 0) {
+				throw new IllegalStateException("Estado inválido dos catálogos");
+			}
+			this.catalogos = new HashSet<>();
+		}
+		if (this.catalogos.contains(catalogo)) {
+			throw new IllegalArgumentException(String.format("%s repetido", catalogo));
+		}
 		this.catalogos.add(catalogo);
-	}
-
-	@Override
-	public void adicionarComando(final ComandoDescritor comando) {
-		this.comandos.add(comando);
 	}
 
 	public void carregar(final Class<?> classe) throws Exception {
@@ -61,34 +72,58 @@ public class Biblioteca implements Comandos, Catalogos {
 	}
 
 	public void carregar(final InputStream arquivo) throws Exception {
-		final JAXBContext context = JAXBContext.newInstance(Biblioteca.class);
-		final Unmarshaller unmarshaller = context.createUnmarshaller();
-		final Biblioteca biblioteca = (Biblioteca) unmarshaller.unmarshal(arquivo);
-		// verificar se há comandos sem a classe definida
-		if (biblioteca.getComandos().stream()
-				.filter(c -> (c instanceof CadeiaDescritor && !c.getClasse().isPresent()
-						&& !((CadeiaDescritor) c).getTipo().isPresent())
-						|| (!(c instanceof CadeiaDescritor) && !c.getClasse().isPresent()))
-				.count() > 0) {
-			throw new IllegalArgumentException("Comandos genéricos sem classe definida não são permitidos");
+		// carregar o arquivo .xml
+		final Biblioteca xml = (Biblioteca) JAXBContext.newInstance(Biblioteca.class).createUnmarshaller()
+				.unmarshal(arquivo);
+
+		// preparar os comandos base
+		if (xml.comandos != null && xml.comandos.size() > 0) {
+			// encontrar comandos repetidos
+			List<?> repetido = Util.itemsRepetidos((List<?>) xml.comandos);
+			if (repetido.size() > 0) {
+				throw new IllegalArgumentException(String.format("Comando(s) Base repetido(s) [%s]", repetido));
+			}
+			// verificar se há comandos sem a classe definida
+			if (xml.comandos.stream()
+					.filter(c -> (c instanceof CadeiaDescritor && !c.getClasse().isPresent()
+							&& !((CadeiaDescritor) c).getTipo().isPresent())
+							|| (!(c instanceof CadeiaDescritor) && !c.getClasse().isPresent()))
+					.count() > 0) {
+				throw new IllegalArgumentException("Comandos Base sem classe definida não são permitidos");
+			}
+			// adicionar comandos ao catálogo base
+			this.getCatalogoBase().adicionar(xml.comandos);
 		}
-		this.adicionarComando(biblioteca.getComandos());
-		this.adicionarCatalogo(biblioteca.getCatalogos());
+		// preparar os catálogos da biblioteca
+		if (xml.catalogos != null && xml.catalogos.size() > 0) {
+			// encontrar comandos repetidos
+			List<?> repetido = Util.itemsRepetidos((List<?>) xml.catalogos);
+			if (repetido.size() > 0) {
+				throw new IllegalArgumentException(String.format("Catálogo(s) repetido(s) [%s]", repetido));
+			}
+			// verificar se o nome do catálogo base foi utilizado
+			if (xml.catalogos.stream().filter(c -> c.getNome().trim().equalsIgnoreCase(CATALOGO_BASE)).count() > 0) {
+				throw new IllegalArgumentException(
+						"O nome do Catálogo Base não pode ser utilizado no(s) catálogo(s) da biblioteca");
+			}
+			// adicionar catálogo(s)
+			this.adicionarCatalogo(xml.catalogos);
+		}
 	}
 
 	public void carregar(final Package pacote) throws Exception {
 		Resource[] rs;
 		try {
 			final String nomeRecurso = String.format("classpath:%s/**/%s", pacote.getName().replaceAll("\\.", "/"),
-					Biblioteca.BIBLIOTECA_NOME);
+					Biblioteca.BIBLIOTECA_ARQUIVO_NOME_PADRAO);
 			rs = new PathMatchingResourcePatternResolver().getResources(nomeRecurso);
+			for (final Resource r : rs) {
+				try (InputStream is = r.getInputStream()) {
+					this.carregar(is);
+				}
+			}
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
-		}
-		for (final Resource r : rs) {
-			try (InputStream is = r.getInputStream()) {
-				this.carregar(is);
-			}
 		}
 	}
 
@@ -96,14 +131,29 @@ public class Biblioteca implements Comandos, Catalogos {
 		this.carregar(new File(nomeArquivo));
 	}
 
-	@Override
-	public Set<Catalogo> getCatalogos() {
-		return Collections.unmodifiableSet(this.catalogos);
+	public Catalogo getCatalogoBase() {
+		return getCatalogo(CATALOGO_BASE).orElseGet(() -> {
+			this.adicionarCatalogo(new Catalogo(CATALOGO_BASE));
+			return this.getCatalogo(CATALOGO_BASE).get();
+		});
 	}
 
 	@Override
-	public Set<ComandoDescritor> getComandos() {
-		return Collections.unmodifiableSet(this.comandos);
+	public Set<Catalogo> getCatalogos() {
+		if (this.catalogos instanceof List) {
+			if (this.catalogos.size() > 0) {
+				throw new IllegalStateException();
+			}
+			this.catalogos = new HashSet<>();
+		}
+		return Collections.unmodifiableSet((Set<Catalogo>) this.catalogos);
+	}
+
+	private Optional<ComandoDescritor> getComando(final String nomeComando,
+			final Collection<ComandoDescritor> comandos) {
+		final Optional<ComandoDescritor> result = comandos.stream()
+				.filter(c -> c.getNome().equalsIgnoreCase(nomeComando)).findFirst();
+		return result;
 	}
 
 	// instanciar classe diretamente por meio de reflection
@@ -111,76 +161,101 @@ public class Biblioteca implements Comandos, Catalogos {
 		return classe.newInstance();
 	}
 
+	// instanciador de comando
 	public Comando instanciar(final String nomeComando) throws Exception {
-		return this.instanciar(nomeComando, this.getComandos());
+		return instanciar(CATALOGO_BASE, nomeComando);
 	}
 
-	// instanciador de comando
-	Comando instanciar(final String nomeComando, final Collection<ComandoDescritor> comandos) throws Exception {
-		final ComandoDescritor comandoDescritor = this.getComando(nomeComando, comandos).get();
+	private Comando instanciar(ComandoDescritor cd) {
+		String[] nome = cd.getNome().split("\\.");
+		try {
+			if (nome.length == 1) {
+				return this.instanciar(nome[0]);
+			} else if (nome.length == 2) {
+				return this.instanciar(nome[0], nome[1]);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
 
-		Comando result = null;
-		if (comandoDescritor instanceof CadeiaDescritor) {
-			if (comandoDescritor.getClasse().isPresent()) {
-				// instanciar diretamente pela classe informada
-				result = this.instanciar(comandoDescritor.getClasse().get());
-			} else if (((CadeiaDescritor) comandoDescritor).getTipo().isPresent()) {
-				// instanciar pela tipo de cadeia informado
-				switch (((CadeiaDescritor) comandoDescritor).getTipo().get()) {
-				case SEQUENCIAL:
-					result = CadeiaSequencial.class.newInstance();
-					break;
-				case PARALELO:
-					result = CadeiaParalela.class.newInstance();
-					break;
-				}
-			} else {
-				// instanciar pelos comandos genéricos da biblioteca
-				Optional<ComandoDescritor> comandoGenerico = this.getComando(comandoDescritor.getNome());
-				if (comandoGenerico.isPresent()) {
-					if (comandoGenerico.get().getClasse().isPresent()) {
-						// instanciar diretamente pela classe informada
-						result = this.instanciar(comandoGenerico.get().getClasse().get());
-					} else if (((CadeiaDescritor) comandoGenerico.get()).getTipo().isPresent()) {
-						// instanciar pela tipo de cadeia informado
-						switch (((CadeiaDescritor) comandoGenerico.get()).getTipo().get()) {
-						case SEQUENCIAL:
-							result = CadeiaSequencial.class.newInstance();
-							break;
-						case PARALELO:
-							result = CadeiaParalela.class.newInstance();
-							break;
-						}
-					} else {
-						throw new IllegalArgumentException(String
-								.format("Comando genérico (%s) existe porém é indefinido", comandoDescritor.getNome()));
-					}
-					if (CadeiaAcao.SUBSTITUIR.equals(((CadeiaDescritor) comandoDescritor).getAcao().orElse(null))) {
-						((Cadeia) result).setComandos(new ArrayList<>());
-					} else {
-						((CadeiaDescritor) comandoDescritor)
-								.setComandos(((CadeiaDescritor) comandoGenerico.get()).getComandos());
-					}
-				} else {
+	// em revisao
+
+	private Comando instanciar(final String nomeComando, final Collection<ComandoDescritor> comandos) throws Exception {
+		final AtomicReference<Comando> result = new AtomicReference<>();
+
+		final ComandoDescritor comandoDescritor = this.getComando(nomeComando, comandos).orElseGet(() -> {
+			throw new IllegalArgumentException(String.format("Nome de comando não encontrado %s", nomeComando));
+		});
+
+		// Se informada, instanciar o comando pela classe
+		comandoDescritor.getClasse().ifPresent((c) -> {
+			try {
+				result.set(this.instanciar(c));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		// instanciar comando
+		if (!(comandoDescritor instanceof CadeiaDescritor)) {
+			if (result. get() == null) {
+				// procurar o comando pelo nome de referência
+				result.set(this.instanciar(comandoDescritor));
+				if (result.get() == null) {
 					throw new IllegalArgumentException(
-							String.format("Comando genérico (%s) não encontrado", comandoDescritor.getNome()));
+							String.format("Comando %s mal definido", comandoDescritor.getNome()));
 				}
 			}
+		} else {
+			// instanciar cadeia
+			if (result.get() == null) {
+				// instanciar pelo tipo de cadeia informado
+				((CadeiaDescritor) comandoDescritor).getTipo().ifPresent((t) -> {
+					try {
+						switch (t) {
+						case SEQUENCIAL:
+							result.set(CadeiaSequencial.class.newInstance());
+							break;
+						case PARALELO:
+							result.set(CadeiaParalela.class.newInstance());
+							break;
+						}
+					} catch (InstantiationException | IllegalAccessException e) {
+						throw new RuntimeException(e);
+					}
+				});
+			}
+
+			if (result.get() == null) {
+				// procurar a cadeia pelo nome de referência
+				result.set(this.instanciar(comandoDescritor));
+				if (result.get() == null) {
+					result.set(CadeiaSequencial.class.newInstance());
+				}
+			}
+
+//				if (CadeiaAcao.SUBSTITUIR.equals(((CadeiaDescritor) comandoDescritor).getAcao().orElse(null))) {
+//					((Cadeia) result.get()).setComandos(new ArrayList<>());
+//				} else {
+//					((CadeiaDescritor) comandoDescritor).setComandos(((CadeiaDescritor) comandoBase.get()).getComandos());
+//				}
 
 			// instanciar os comandos vinculados
 			for (final ComandoDescritor c : ((CadeiaDescritor) comandoDescritor).getComandos()) {
 				final Comando comando = this.instanciar(c.getNome(),
 						((CadeiaDescritor) comandoDescritor).getComandos());
 				comando.ordem = c.getOrdem().orElse(null);
-				((Cadeia) result).adicionarComando(comando);
+				((Cadeia) result.get()).adicionarComando(comando);
 			}
 
 			// ordenar comandos da cadeia
 			// adicionar os números para ordenação
 			int cont = 0;
-			final List<Integer> e = ((Cadeia) result).getComandos().stream().filter(c -> c.ordem != null)
+			final List<Integer> e = ((Cadeia) result.get()).getComandos().stream().filter(c -> c.ordem != null)
 					.map(c -> c.ordem).collect(Collectors.toList());
-			for (final Comando comando : ((Cadeia) result).getComandos()) {
+			for (final Comando comando : ((Cadeia) result.get()).getComandos()) {
 				if (comando.ordem == null) {
 					do {
 					} while (e.contains(Math.abs(--cont)));
@@ -189,23 +264,17 @@ public class Biblioteca implements Comandos, Catalogos {
 			}
 
 			// ordenar comandos
-			final List<Comando> listaOrdenada = ((Cadeia) result).getComandos().stream()
-					.sorted(((a, b) -> new Integer(Math.abs(a.ordem)).compareTo(new Integer(Math.abs(b.ordem)))))
-					.collect(Collectors.toList());
+//			final List<Comando> listaOrdenada = ((Cadeia) result.get()).getComandos().stream()
+//					.sorted(((a, b) -> new Integer(Math.abs(a.ordem)).compareTo(new Integer(Math.abs(b.ordem)))))
+//					.collect(Collectors.toList());
 
-			((Cadeia) result).setComandos(listaOrdenada);
-		} else {
-			// instanciar comandos
-			if (!comandoDescritor.getClasse().isPresent()) {
-				comandoDescritor.setClasse(this.getComando(comandoDescritor.getNome()).get().getClasse().get());
-			}
-			result = this.instanciar(comandoDescritor.getClasse().get());
+			// ((Cadeia) result.get()).setComandos(listaOrdenada);
 		}
 
-		// atribuir o nome da cadeia
-		result.setNome(nomeComando);
+		// atribuir o nome do comando
+		result.get().setNome(nomeComando);
 
-		return result;
+		return result.get();
 	}
 
 	public Comando instanciar(final String nomeCatalogo, final String nomeComando) throws Exception {
@@ -217,21 +286,29 @@ public class Biblioteca implements Comandos, Catalogos {
 
 		Comando result = comando;
 		if (catalogo.getAntes().isPresent() || catalogo.getDepois().isPresent()) {
-			result = new CadeiaSequencial();
-			if (catalogo.getAntes().isPresent()) {
-				((Cadeia) result).adicionarComando(this.instanciar(catalogo.getAntes().get().getNome()));
-			}
-
-			((Cadeia) result).adicionarComando(comando);
-
-			if (catalogo.getDepois().isPresent()) {
-				((Cadeia) result).adicionarComando(this.instanciar(catalogo.getDepois().get().getNome()));
-			}
+			final Cadeia cadeia = new CadeiaSequencial();
+			catalogo.getAntes().ifPresent(c -> {
+				try {
+					cadeia.adicionarComando(this.instanciar(c.getNome()));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
+			cadeia.adicionarComando(comando);
+			catalogo.getDepois().ifPresent(c -> {
+				try {
+					cadeia.adicionarComando(this.instanciar(c.getNome()));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			});
+			result = cadeia;
 		}
+
 		return result;
 	}
 
-	void mergeComandos(final Comandos base, final Comandos modelo) {
+	private void mergeComandos(final Comandos base, final Comandos modelo) {
 		boolean mesclar = true;
 		if (base instanceof CadeiaDescritor) {
 			mesclar = CadeiaAcao.MESCLAR.equals(((CadeiaDescritor) base).getAcao().orElse(CadeiaAcao.MESCLAR));
@@ -253,13 +330,13 @@ public class Biblioteca implements Comandos, Catalogos {
 					}
 				}
 				if (!encontrou) {
-					base.adicionarComando(modeloCd);
+					base.adicionar(modeloCd);
 				}
 			}
 		}
 	}
 
-	Catalogo montarCatalogo(final Catalogo base, final Optional<Catalogo> modeloOpt) {
+	private Catalogo montarCatalogo(final Catalogo base, final Optional<Catalogo> modeloOpt) {
 		if (!modeloOpt.isPresent()) {
 			return base;
 		}

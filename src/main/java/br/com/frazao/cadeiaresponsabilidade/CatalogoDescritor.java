@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Catalogo implements Comandos {
+public class CatalogoDescritor implements Comandos {
 
 	@XmlAttribute(name = "antes")
 	@XmlIDREF
@@ -35,25 +35,25 @@ public class Catalogo implements Comandos {
 
 	@XmlAttribute(name = "modelo")
 	@XmlIDREF
-	private Catalogo modelo;
+	private CatalogoDescritor modelo;
 
 	@XmlAttribute(name = "nome", required = true)
 	@XmlID
 	private String nome;
 
-	Catalogo() {
+	CatalogoDescritor() {
 	}
 
-	public Catalogo(final String nome) {
+	public CatalogoDescritor(final String nome) {
 		this.setNome(nome);
 	}
 
-	public Catalogo(final String nome, final Collection<ComandoDescritor> comandos) {
+	public CatalogoDescritor(final String nome, final Collection<ComandoDescritor> comandos) {
 		this(nome);
 		this.adicionar(comandos);
 	}
 
-	public Catalogo(final String nome, final ComandoDescritor... comandos) {
+	public CatalogoDescritor(final String nome, final ComandoDescritor... comandos) {
 		this(nome, Arrays.asList(comandos));
 	}
 	
@@ -73,10 +73,10 @@ public class Catalogo implements Comandos {
 		if (this == obj) {
 			return true;
 		}
-		if (!(obj instanceof Catalogo)) {
+		if (!(obj instanceof CatalogoDescritor)) {
 			return false;
 		}
-		Catalogo other = (Catalogo) obj;
+		CatalogoDescritor other = (CatalogoDescritor) obj;
 		return this.getNome().equalsIgnoreCase(other.getNome());
 	}
 
@@ -93,7 +93,7 @@ public class Catalogo implements Comandos {
 		return Optional.ofNullable(this.depois);
 	}
 
-	public Optional<Catalogo> getModelo() {
+	public Optional<CatalogoDescritor> getModelo() {
 		return Optional.ofNullable(this.modelo);
 	}
 
@@ -114,7 +114,7 @@ public class Catalogo implements Comandos {
 		this.depois = depois;
 	}
 
-	public void setModelo(final Catalogo modelo) {
+	public void setModelo(final CatalogoDescritor modelo) {
 		this.modelo = modelo;
 	}
 
