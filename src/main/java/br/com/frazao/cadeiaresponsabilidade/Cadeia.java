@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
-abstract class Cadeia extends Comando {
+public abstract class Cadeia extends Comando {
 
 	private final List<Comando> comandos = new ArrayList<>();
 
@@ -21,18 +21,18 @@ abstract class Cadeia extends Comando {
 
 	public Cadeia(final List<Comando> comandos) {
 		this();
-		this.adicionarComando(comandos);
+		this.adicionar(comandos);
 	}
 
-	public final void adicionarComando(final Comando... comandos) {
-		this.adicionarComando(Arrays.asList(comandos));
+	public final void adicionar(final Comando... comandos) {
+		this.adicionar(Arrays.asList(comandos));
 	}
 
-	public final void adicionarComando(final Comando comando) {
-		this.adicionarComando(this.comandos.size(), comando);
+	public final void adicionar(final Comando comando) {
+		this.adicionar(this.comandos.size(), comando);
 	}
 
-	public final void adicionarComando(final Integer posicao, final Comando comando) {
+	public final void adicionar(final Integer posicao, final Comando comando) {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%s) adicionando comando (%s)", this, comando));
 		}
@@ -46,8 +46,8 @@ abstract class Cadeia extends Comando {
 		this.comandos.add(posicao, comando);
 	}
 
-	public final void adicionarComando(final List<Comando> comandos) {
-		comandos.forEach(comando -> this.adicionarComando(comando));
+	public final void adicionar(final List<Comando> comandos) {
+		comandos.forEach(comando -> this.adicionar(comando));
 	}
 
 	@Override

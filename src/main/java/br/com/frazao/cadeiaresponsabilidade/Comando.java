@@ -24,14 +24,12 @@ public abstract class Comando {
 	Integer ordem;
 
 	public Comando() {
-		super();
 		if (this.log().isLoggable(Level.FINER)) {
-			this.log().finer(String.format("(%s) novo comando", this.getClass().getName()));
+			this.log().finer(String.format("(%s) novo comando", this));
 		}
 	}
 
 	public Comando(final String nome) {
-		this();
 		this.nome = nome;
 		if (this.log().isLoggable(Level.FINER)) {
 			this.log().finer(String.format("(%s) novo comando", this));
@@ -51,7 +49,7 @@ public abstract class Comando {
 		}
 	}
 
-	private String descreverTempo(long milessegundos) {
+	private final String descreverTempo(long milessegundos) {
 		if (milessegundos < 0) {
 			return "";
 		}
@@ -69,7 +67,7 @@ public abstract class Comando {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -120,24 +118,24 @@ public abstract class Comando {
 		}
 	}
 
-	public Duration getDuracao() {
+	public final Duration getDuracao() {
 		return this.duracao;
 	}
 
-	public Instant getInicio() {
+	public final Instant getInicio() {
 		return this.inicio;
 	}
 
-	public String getNome() {
+	public final String getNome() {
 		return this.nome == null ? this.getClass().getName() : this.nome;
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(this.getNome());
+	public final int hashCode() {
+		return Objects.hash(this.getNome().toUpperCase());
 	}
 
-	protected Logger log() {
+	protected final Logger log() {
 		if (this.log == null) {
 			this.log = Logger.getLogger(this.getClass().getName());
 		}

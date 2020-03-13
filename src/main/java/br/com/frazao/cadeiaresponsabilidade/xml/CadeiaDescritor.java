@@ -1,4 +1,4 @@
-package br.com.frazao.cadeiaresponsabilidade;
+package br.com.frazao.cadeiaresponsabilidade.xml;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,16 +12,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import br.com.frazao.cadeiaresponsabilidade.dominio.CadeiaAcao;
+import br.com.frazao.cadeiaresponsabilidade.dominio.CadeiaTipo;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-class CadeiaDescritor extends ComandoDescritor implements Comandos {
+public final class CadeiaDescritor extends ComandoDescritor {
 
 	@XmlAttribute(name = "acao")
 	private CadeiaAcao acao = CadeiaAcao.MESCLAR;
 
 	@XmlElements({ @XmlElement(name = "comando", type = ComandoDescritor.class),
 			@XmlElement(name = "cadeia", type = CadeiaDescritor.class) })
-	private List<ComandoDescritor> comandos = new ArrayList<>();
+	private final List<ComandoDescritor> comandos = new ArrayList<>();
 
 	@XmlAttribute(name = "tipo")
 	private CadeiaTipo tipo;
@@ -29,37 +32,16 @@ class CadeiaDescritor extends ComandoDescritor implements Comandos {
 	CadeiaDescritor() {
 	}
 
-	@Override
-	public void adicionar(final ComandoDescritor comando) {
-		this.comandos.add(comando);
-	}
-
-	public Optional<CadeiaAcao> getAcao() {
+	public final Optional<CadeiaAcao> getAcao() {
 		return Optional.ofNullable(this.acao);
 	}
 
-	@Override
-	public List<ComandoDescritor> getComandos() {
+	public final List<ComandoDescritor> getComandos() {
 		return Collections.unmodifiableList(this.comandos);
 	}
 
-	public Optional<CadeiaTipo> getTipo() {
+	public final Optional<CadeiaTipo> getTipo() {
 		return Optional.ofNullable(this.tipo);
-	}
-
-	void setAcao(final CadeiaAcao acao) {
-		this.acao = acao;
-	}
-
-	public void setComandos(final List<ComandoDescritor> comados) {
-		this.comandos = comados;
-	}
-
-	public void setTipo(final CadeiaTipo tipo) {
-		if (tipo == null) {
-			throw new NullPointerException();
-		}
-		this.tipo = tipo;
 	}
 
 }

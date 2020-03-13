@@ -1,7 +1,11 @@
-package br.com.frazao.cadeiaresponsabilidade;
+package br.com.frazao.cadeiaresponsabilidade.impl;
 
 import java.util.List;
 import java.util.logging.Level;
+
+import br.com.frazao.cadeiaresponsabilidade.Cadeia;
+import br.com.frazao.cadeiaresponsabilidade.Comando;
+import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class CadeiaSequencial extends Cadeia {
 

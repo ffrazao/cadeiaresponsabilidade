@@ -1,124 +1,110 @@
 package br.com.frazao.cadeiaresponsabilidade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlIDREF;
-import javax.xml.bind.annotation.XmlRootElement;
+public final class Catalogo {
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Catalogo implements Comandos {
+	public static final String CATALOGO_BASE_NOME_PADRAO = "";
 
-	@XmlAttribute(name = "antes")
-	@XmlIDREF
-	private ComandoDescritor antes;
+	private Comando antes;
 
-	@XmlElements({ @XmlElement(name = "comando", type = ComandoDescritor.class),
-			@XmlElement(name = "cadeia", type = CadeiaDescritor.class) })
-	private final Set<ComandoDescritor> comandos = new HashSet<>();
+	private final Set<Comando> comandos = new TreeSet<>();
 
-	@XmlAttribute(name = "depois")
-	@XmlIDREF
-	private ComandoDescritor depois;
+	private Comando depois;
 
-	@XmlAttribute(name = "modelo")
-	@XmlIDREF
-	private Catalogo modelo;
-
-	@XmlAttribute(name = "nome", required = true)
-	@XmlID
 	private String nome;
-
-	Catalogo() {
-	}
 
 	public Catalogo(final String nome) {
 		this.setNome(nome);
 	}
 
-	public Catalogo(final String nome, final Collection<ComandoDescritor> comandos) {
+	public Catalogo(final String nome, final Collection<Comando> comandos) {
 		this(nome);
 		this.adicionar(comandos);
 	}
 
-	public Catalogo(final String nome, final ComandoDescritor... comandos) {
+	public Catalogo(final String nome, final Comando... comandos) {
 		this(nome, Arrays.asList(comandos));
 	}
-	
-	@Override
-	public void adicionar(final ComandoDescritor comando) {
+
+	public final void adicionar(final Collection<Comando> comandos) {
+		comandos.forEach(c -> this.adicionar(c));
+	}
+
+	public final void adicionar(final Comando... comandos) {
+		this.adicionar(Arrays.asList(comandos));
+	}
+
+	public final void adicionar(final Comando comando) {
 		if (comando == null) {
 			throw new NullPointerException();
 		}
 		if (this.comandos.contains(comando)) {
-			throw new IllegalArgumentException(String.format("%s repetido", comando));
+			throw new IllegalArgumentException(String.format("%s já adicionado!", comando));
 		}
 		this.comandos.add(comando);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 		if (!(obj instanceof Catalogo)) {
 			return false;
 		}
-		Catalogo other = (Catalogo) obj;
+		final Catalogo other = (Catalogo) obj;
 		return this.getNome().equalsIgnoreCase(other.getNome());
 	}
 
-	public Optional<ComandoDescritor> getAntes() {
+	public final Optional<Comando> getAntes() {
 		return Optional.ofNullable(this.antes);
 	}
 
-	@Override
-	public Set<ComandoDescritor> getComandos() {
+	public Comando getComando(String nome) {
+		Set<Comando> pesquisa = null;
+		pesquisa = this.getComandos().stream().filter(c -> c.getNome().equalsIgnoreCase(nome)).collect(Collectors.toSet());
+		if (pesquisa.size() == 1) {
+			return new ArrayList<>(pesquisa).get(0);
+		} else {
+			throw new IllegalArgumentException(String.format("Comando inválido [%s]", nome));
+		}
+	}
+
+	public final Set<Comando> getComandos() {
 		return Collections.unmodifiableSet(this.comandos);
 	}
 
-	public Optional<ComandoDescritor> getDepois() {
+	public final Optional<Comando> getDepois() {
 		return Optional.ofNullable(this.depois);
 	}
 
-	public Optional<Catalogo> getModelo() {
-		return Optional.ofNullable(this.modelo);
-	}
-
-	public String getNome() {
+	public final String getNome() {
 		return this.nome == null ? this.getClass().getName() : this.nome;
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(nome);
+	public final int hashCode() {
+		return Objects.hash(this.getNome().toUpperCase());
 	}
 
-	public void setAntes(final ComandoDescritor antes) {
+	public final void setAntes(final Comando antes) {
 		this.antes = antes;
 	}
 
-	public void setDepois(final ComandoDescritor depois) {
+	public final void setDepois(final Comando depois) {
 		this.depois = depois;
 	}
 
-	public void setModelo(final Catalogo modelo) {
-		this.modelo = modelo;
-	}
-
-	void setNome(final String nome) {
+	final void setNome(final String nome) {
 		if (nome == null) {
 			throw new NullPointerException("Nome de catálogo nulo");
 		}
@@ -126,7 +112,7 @@ public class Catalogo implements Comandos {
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return "Catalogo [" + this.getNome() + "]";
 	}
 

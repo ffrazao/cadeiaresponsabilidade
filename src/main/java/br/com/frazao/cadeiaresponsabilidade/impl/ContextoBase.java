@@ -1,10 +1,12 @@
-package br.com.frazao.cadeiaresponsabilidade;
+package br.com.frazao.cadeiaresponsabilidade.impl;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+
+import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public final class ContextoBase extends HashMap<String, Object> implements Contexto {
 
@@ -84,7 +86,7 @@ public final class ContextoBase extends HashMap<String, Object> implements Conte
 	@Override
 	public void setRequisicao(final Object valor) {
 		if (this.getRequisicao() != null) {
-			throw new IllegalArgumentException("A requisição não pode ser redefinida!");
+			throw new IllegalArgumentException("A requisiï¿½ï¿½o nï¿½o pode ser redefinida!");
 		}
 		this.put(ContextoBase.CAMPO_REQUISICAO, valor);
 	}
@@ -104,7 +106,7 @@ public final class ContextoBase extends HashMap<String, Object> implements Conte
 	@Override
 	public void setUsuario(final Principal valor) {
 		if (this.getUsuario() != null) {
-			throw new IllegalArgumentException("A informação do usuário requerente não pode ser redefinido!");
+			throw new IllegalArgumentException("A informaï¿½ï¿½o do usuï¿½rio requerente nï¿½o pode ser redefinido!");
 		}
 		this.put(ContextoBase.CAMPO_USUARIO, valor);
 	}

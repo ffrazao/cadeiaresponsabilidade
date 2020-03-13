@@ -1,4 +1,4 @@
-package br.com.frazao.cadeiaresponsabilidade;
+package br.com.frazao.cadeiaresponsabilidade.xml;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -9,9 +9,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import br.com.frazao.cadeiaresponsabilidade.Comando;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-class ComandoDescritor {
+public class ComandoDescritor {
 
 	@XmlAttribute
 	private Class<? extends Comando> classe;
@@ -27,7 +29,7 @@ class ComandoDescritor {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public final boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -38,33 +40,25 @@ class ComandoDescritor {
 		return this.nome.equalsIgnoreCase(other.nome);
 	}
 
-	public Optional<Class<? extends Comando>> getClasse() {
+	public final Optional<Class<? extends Comando>> getClasse() {
 		return Optional.ofNullable(this.classe);
 	}
 
-	public String getNome() {
+	public final String getNome() {
 		return this.nome;
 	}
 
-	public Optional<Integer> getOrdem() {
+	public final Optional<Integer> getOrdem() {
 		return Optional.ofNullable(this.ordem);
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return Objects.hash(this.nome);
-	}
-
-	public void setClasse(final Class<? extends Comando> classe) {
-		this.classe = classe;
-	}
-
-	public void setOrdem(final Integer ordem) {
-		this.ordem = ordem;
 	}
 	
 	@Override
-	public String toString() {
+	public final String toString() {
 		return String.format("%s[%s]", this.getClass().getSimpleName(), this.getNome());
 	}
 

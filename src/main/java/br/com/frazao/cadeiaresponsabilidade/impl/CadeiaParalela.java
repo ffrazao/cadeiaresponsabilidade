@@ -1,4 +1,4 @@
-package br.com.frazao.cadeiaresponsabilidade;
+package br.com.frazao.cadeiaresponsabilidade.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
+
+import br.com.frazao.cadeiaresponsabilidade.Cadeia;
+import br.com.frazao.cadeiaresponsabilidade.Comando;
+import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class CadeiaParalela extends Cadeia {
 
