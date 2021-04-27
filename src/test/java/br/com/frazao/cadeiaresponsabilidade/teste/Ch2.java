@@ -8,7 +8,7 @@ import br.com.frazao.cadeiaresponsabilidade.impl.CadeiaSequencial;
 public class Ch2 extends CadeiaSequencial {
 
 	public Ch2() {
-		super(new C1("1"), new C2("2"), new C3("3"));
+		super("cadeia", new C1("1"), new C2("2"), new C3("3"));
 		this.adicionar(1, new C1("22"));
 	}
 

@@ -9,16 +9,12 @@ import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class CadeiaSequencial extends Cadeia {
 
-	CadeiaSequencial() {
-		super();
+	public CadeiaSequencial(final String nome, final Comando... comandos) {
+		super(nome, comandos);
 	}
 
-	public CadeiaSequencial(final Comando... comandos) {
-		super(comandos);
-	}
-
-	public CadeiaSequencial(final List<Comando> comandos) {
-		super(comandos);
+	public CadeiaSequencial(final String nome, final List<Comando> comandos) {
+		super(nome, comandos);
 	}
 
 	@Override

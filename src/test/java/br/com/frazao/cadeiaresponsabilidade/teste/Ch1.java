@@ -8,11 +8,12 @@ import br.com.frazao.cadeiaresponsabilidade.impl.CadeiaParalela;
 @Component
 public class Ch1 extends CadeiaParalela {
 	
-	public Ch1() {
+	public Ch1(String nome) {
+		super(nome);
 	}
 
-	public Ch1(final Comando... comandoList) {
-		super(comandoList);
+	public Ch1(String nome, final Comando... comandoList) {
+		super(nome, comandoList);
 	}
 
 }

@@ -23,11 +23,11 @@ public abstract class Comando {
 
 	Integer ordem;
 
-	public Comando() {
-		if (this.log().isLoggable(Level.FINER)) {
-			this.log().finer(String.format("(%s) novo comando", this));
-		}
-	}
+//	public Comando() {
+//		if (this.log().isLoggable(Level.FINER)) {
+//			this.log().finer(String.format("(%s) novo comando", this));
+//		}
+//	}
 
 	public Comando(final String nome) {
 		this.nome = nome;
@@ -36,14 +36,14 @@ public abstract class Comando {
 		}
 	}
 
-	protected <k, v> boolean antesProcedimento(final Contexto contexto) {
+	protected <k, v> boolean antesProcedimento(final Contexto contexto) throws Exception {
 		if (this.log().isLoggable(Level.CONFIG)) {
 			this.log().config(String.format("(%s) antes de executar", this));
 		}
 		return Comando.CONTINUAR;
 	}
 
-	protected <k, v> void depoisProcedimento(final Contexto contexto) {
+	protected <k, v> void depoisProcedimento(final Contexto contexto) throws Exception {
 		if (this.log().isLoggable(Level.FINER)) {
 			this.log().finer(String.format("(%s) depois de executar", this));
 		}
@@ -98,17 +98,17 @@ public abstract class Comando {
 			}
 			do {
 				try {
-					if (!this.antesProcedimento(contexto)) {
+					if (this.antesProcedimento(contexto) == Comando.PARAR) {
 						break;
 					}
 					this.procedimento(contexto);
 					this.depoisProcedimento(contexto);
 				} catch (final Exception e) {
-					if (!this.erroAoExecutar(contexto, e)) {
+					if (this.erroAoExecutar(contexto, e) == Comando.PARAR) {
 						throw e;
 					}
 				}
-			} while (this.vaiRepetir(contexto));
+			} while (this.vaiRepetir(contexto) == Comando.CONTINUAR);
 		} finally {
 			this.duracao = Duration.between(this.inicio, Instant.now());
 			if (this.log().isLoggable(Level.INFO)) {

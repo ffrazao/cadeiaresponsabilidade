@@ -11,10 +11,6 @@ public class C1 extends Comando {
 
 	private final Integer total = 2;
 
-	public C1() {
-		
-	}
-
 	public C1(final String nome) {
 		super(nome);
 	}

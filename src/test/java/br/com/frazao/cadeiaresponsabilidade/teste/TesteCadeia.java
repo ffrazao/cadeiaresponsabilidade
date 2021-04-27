@@ -27,7 +27,7 @@ public class TesteCadeia {
 
 		final Contexto contexto = new ContextoBase();
 
-		this.minhaBiblioteca.carregar(TesteCadeia.class);
+//		this.minhaBiblioteca.carregar(TesteCadeia.class);
 
 //		final Comando t1 = this.minhaBiblioteca.instanciar("DIA");
 //		contexto.put("a", "a");

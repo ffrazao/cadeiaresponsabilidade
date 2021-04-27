@@ -12,15 +12,12 @@ public abstract class Cadeia extends Comando {
 
 	private boolean congelado = false;
 
-	Cadeia() {
+	public Cadeia(String nome, final Comando... comandos) {
+		this(nome, Arrays.asList(comandos));
 	}
 
-	public Cadeia(final Comando... comandos) {
-		this(Arrays.asList(comandos));
-	}
-
-	public Cadeia(final List<Comando> comandos) {
-		this();
+	public Cadeia(String nome, final List<Comando> comandos) {
+		super(nome);
 		this.adicionar(comandos);
 	}
 

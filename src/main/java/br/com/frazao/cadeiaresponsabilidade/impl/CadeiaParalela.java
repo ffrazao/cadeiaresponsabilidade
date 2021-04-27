@@ -13,16 +13,13 @@ import br.com.frazao.cadeiaresponsabilidade.Contexto;
 
 public class CadeiaParalela extends Cadeia {
 
-	CadeiaParalela() {
-		super();
+
+	public CadeiaParalela(final String nome, final Comando... comandos) {
+		super(nome, comandos);
 	}
 
-	public CadeiaParalela(final Comando... comandos) {
-		super(comandos);
-	}
-
-	public CadeiaParalela(final List<Comando> comandos) {
-		super(comandos);
+	public CadeiaParalela(final String nome, final List<Comando> comandos) {
+		super(nome, comandos);
 	}
 
 	@Override
